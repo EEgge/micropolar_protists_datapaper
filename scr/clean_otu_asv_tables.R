@@ -130,4 +130,72 @@ three180_new <- as.character(sample_names[three180,])
 ten50_new <- as.character(sample_names[ten50,])
 fifty200_new <- as.character(sample_names[fifty200,])
 net_all_new <- as.character(sample_names[net_all,])
+
+#### 14.01.2021 - combine dada2 processed samples ####
+#### Combine sequencing_events that represent the same sample_sf ####
+OTUtab$MP1_B16_0001_0.4.3_sum <- OTUtab$MP1_15miseq+OTUtab$MP1_B16_0001_0.4.3_hiseq
+OTUtab$MP1_B08_1000_0.4.3 <- OTUtab$MP1_31miseq+OTUtab$MP1_B08_1000_0.4.3_hiseq
+OTUtab$MP1_B16_1000_0.4.3_sum <- OTUtab$MP1_3miseq+OTUtab$MP1_B16_1000_0.4.3_hiseq
+OTUtab$MP1_B16_0001_3.180_sum <- OTUtab$MP1_47miseq+OTUtab$MP1_B16_0001_3.180_hiseq
+OTUtab$MP1_B08_0001_3.180sum <- OTUtab$MP1_51miseq+OTUtab$MP1_B08_0001_3.180
+OTUtab$MP1_B08_500_3.180 <- OTUtab$MP1_59miseq+OTUtab$MP1_B08_500_3.180
+
+OTUtab$MP2_M04_0020_0.4.3sum <- OTUtab$MP2_17miseq+OTUtab$MP2_M04_0020_0.4.3
+OTUtab$MP2_M04_0001_0.4.3sum <- OTUtab$MP2_4miseq+OTUtab$MP2_M04_0001_0.4.3
+
+OTUtab$MP3_P04_500_3.10sum <- OTUtab$MP3_NP_107miseq+OTUtab$MP3_P04_500_3.10
+OTUtab$MP3_P04_500_0.4.3sum <- OTUtab$MP3_NP_111miseq+OTUtab$MP3_P04_500_0.4.3
+OTUtab$MP3_P04_0001_3.10sum <- OTUtab$MP3_NP_114miseq+OTUtab$MP3_P04_0001_3.10
+OTUtab$MP3_P04_0001_0.4.3sum <- OTUtab$MP3_NP_118miseq+OTUtab$MP3_P04_0001_0.4.3
+OTUtab$MP3_P03_0001_0.4.3sum <- OTUtab$MP3_NP_55miseq+OTUtab$MP3_P03_0001_0.4.3
+OTUtab$MP3_P03_447_0.4.3sum <- OTUtab$MP3_NP_63miseq+OTUtab$MP3_P03_447_0.4.3
+OTUtab$MP3_P01_0020_0.4.3sum <- OTUtab$MP3_NP_7miseq+OTUtab$MP3_P01_0020_0.4.3
+OTUtab$MP3_P03_0015_0.4.3sum <- OTUtab$MP3_NP_87miseq+OTUtab$MP3_P03_0015_0.4.3
+OTUtab$MP3_P04_1000_3.10sum <- OTUtab$MP3_NP_99miseq+OTUtab$MP3_P04_1000_3.10
+
+OTUtab$MP4_P05_213_50.200sum <- OTUtab$MP4_MI_16miseq+OTUtab$MP4_P05_213_50.200
+OTUtab$MP4_P05_0001_50.200sum <- OTUtab$MP4_MI_3miseq+OTUtab$MP4_P05_0001_50.200
+OTUtab$MP4_P06_500_10.50sum <- OTUtab$MP4_MI_48miseq+OTUtab$MP4_P06_500_10.50
+OTUtab$MP4_P06_net_50.200sum <- OTUtab$MP4_MI_52miseq+OTUtab$MP4_P06_net_50.200
+OTUtab$MP4_P07_0025_10.50sum <- OTUtab$MP4_MI_66miseq+OTUtab$MP4_P07_0025_10.50
+
+OTUtab$MP4_P06_0001_0.4.3sum <- OTUtab$MP4_NP_30miseq+OTUtab$MP4_P06_0001_0.4.3
+OTUtab$MP4_P06_0024_3.10sum <- OTUtab$MP4_NP_34miseq+OTUtab$MP4_P06_0024_3.10
+OTUtab$MP4_P06_0024_0.4.3sum <- OTUtab$MP4_NP_38miseq+OTUtab$MP4_P06_0024_0.4.3
+OTUtab$MP4_P07_0025_3.10sum <- OTUtab$MP4_NP_66miseq+OTUtab$MP4_P07_0025_3.10
+OTUtab$MP4_P07_1000_3.10sum <- OTUtab$MP4_NP_74miseq+OTUtab$MP4_P07_1000_3.10
+OTUtab$MP4_P07_500_0.4.3sum <- OTUtab$MP4_NP_86miseq+OTUtab$MP4_P07_500_0.4.3
+
+OTUtab$MP5_N02_0020_50.200sum <- OTUtab$MP5_MI_11miseq+OTUtab$MP5_N02_0020_50.200
+OTUtab$MP5_N03_net_10.50sum <- OTUtab$MP5_MI_18miseq+OTUtab$MP5_N03_net_10.50
+OTUtab$MP5_N03_0020_50.200sum <- OTUtab$MP5_MI_29miseq+OTUtab$MP5_N03_0020_50.200
+OTUtab$MP5_N04_1000_10.50sum <- OTUtab$MP5_MI_36miseq+OTUtab$MP5_N04_1000_10.50
+OTUtab$MP5_N03_0020_0.4.3sum <- OTUtab$MP5_NP_35miseq+OTUtab$MP5_N03_0020_0.4.3
+OTUtab$MP5_N04_0020_0.4.3sum <- OTUtab$MP5_NP_59miseq+OTUtab$MP5_N04_0020_0.4.3
+
+#####
+#Compare tests
+cor.test(OTUtab$MP4_P06_0001_0.4.3, OTUtab$MP4_NP_30_32)
+cor.test(OTUtab$MP4_P06_0001_0.4.3, OTUtab$MP4_NP_30_dl)
+cor.test(OTUtab$MP4_P06_0001_0.4.3, OTUtab$MP4_NP_30miseq)
+cor.test(OTUtab$MP4_P05_net_50.200, OTUtab$MP4_MI_22_60deg)
+cor.test(OTUtab$MP3_P03_0015_0.4.3, OTUtab$MP3_NP_87miseq)
+cor.test(OTUtab$MP1_B16_0001_0.4.3, OTUtab$MP1_15miseq)
+cor.test(OTUtab$MP1_B16_1000_0.4.3, OTUtab$MP1_3miseq)
+cor.test(OTUtab$MP1_B08_1000_0.4.3, OTUtab$MP1_31miseq)
+cor.test(OTUtab$MP1_B16_0001_3.180, OTUtab$MP1_47miseq)
+cor.test(OTUtab$MP1_B08_0001_3.180, OTUtab$MP1_51miseq)
+cor.test(OTUtab$MP1_B08_500_3.180, OTUtab$MP1_59miseq)
+
+cor.test(OTUtab$MP4_NP_38, OTUtab$MP4_NP_38_40)
+
+#Combine rest of duplicate samples:
+OTUtab$MP4_P06_0024_0.4.3sum2 <- OTUtab$MP4_NP_38sum + OTUtab$MP4_NP_38_40
+OTUtab$MP4_P05_net_50.200sum2 <- OTUtab$MP4_MI_22 + OTUtab$MP4_MI_22_60deg
+OTUtab$MP4_P06_0024_50.200sum2 <- OTUtab$MP4_MI_34 + OTUtab$MP4_MI_34_ob
+OTUtab$MP4_P06_0001_0.4.3sum2 <- OTUtab$MP4_NP_30sum + OTUtab$MP4_NP_30_32 + OTUtab$MP4_NP_30_dl
+OTUtab$MP4_P07_0025_3.10sum2 <- OTUtab$MP4_NP_66sum +OTUtab$MP4_NP_66_60deg +OTUtab$MP4_NP_66_ob
+OTUtab$MP4_P07_1000_3.10sum2 <- OTUtab$MP4_NP_74sum + OTUtab$MP4_NP_74_76
+OTUtab$MP4_P07_500_0.4.3sum2 <- OTUtab$MP4_NP_86sum + OTUtab$MP4_NP_86_88
+
 ```

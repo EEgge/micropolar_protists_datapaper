@@ -13,7 +13,7 @@ library(shiny)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Interactive figures from MicroPolar protist metabarcoding data paper"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -28,7 +28,7 @@ ui <- fluidPage(
                                selected = "All"),
             radioButtons("taxlevel_barplot", label = "Taxonomic level",
                          choices = c("Division" = "Divisionlong", "Class"="Class", "Order"="Order", "Family"="Family", "Genus"="Genus", "Species"="Species")),
-            radioButtons("propchoice", label = "Proportion of group or all", choices = c("Selected group" = "selectgroup","All" = "All"))
+            radioButtons("propchoice", label = "Proportion of selected group or all", choices = c("Selected group" = "selectgroup","All" = "All"))
             
         ),
 
@@ -53,7 +53,7 @@ server <- function(input, output) {
         otutab_sfsep <- otutab_sfsep %>% select(-all_of(three200.2)) #Remove 'fake' size fraction 3-200
         
         if (input$taxo_group2 != "All") {
-            otutab_tax0 <- otutab_sfsep %>% filter(Divisionlong %in% input$taxo_group2) #Create new OTU table with only the selected division
+            otutab_tax0 <- otutab_sfsep %>% filter(.data[[input$taxlevel]] %in% .env[[input$taxo_group2]]) #Create new OTU table with only the selected division
         } else {
             otutab_tax0 <- otutab_sfsep
         }
@@ -120,13 +120,13 @@ server <- function(input, output) {
         }
         #sjekk_prop <- head(taxgroupspre_mat)[1,] ####14.03.2020
         
-        #if (input$propchoice == "selectgroup") {
+        if (input$propchoice == "selectgroup") {
         taxgroups_select2 <- rbind(taxgroups_select[,-1],othersum)
-        #   taxgroups_select2 <- sweep(taxgroups_select2, 2 , colSums(taxgroups_select2), FUN = "/")
-        # } else {
-        #   taxgroups_select2 <- rbind(taxgroups_select[,-1],othersum)
-        # }
-        #
+           taxgroups_select2 <- sweep(taxgroups_select2, 2 , colSums(taxgroups_select2), FUN = "/")
+         } else {
+           taxgroups_select2 <- rbind(taxgroups_select[,-1],othersum)
+         }
+        
         
         
         

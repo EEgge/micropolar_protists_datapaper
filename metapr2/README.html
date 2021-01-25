@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>MetaPR2 files</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="metapr2-files">MetaPR2 files</h1>
+<h2 id="instructions-to-regenerate-the-data-no-need-to-do-a-priori">Instructions to regenerate the data (no need to do a priori)</h2>
+<ul>
+<li>Do not change the structure of the directories because the R markdown script will not work</li>
+<li>Launch the R project in the dada2 directory &quot;metaPR2 micropolar.Rproj&quot;</li>
+</ul>
+<h2 id="asvs">ASVs</h2>
+<ul>
+<li>ASVs from different datasets have been merged using the sequence hashtag (2 identical sequences have the same hashtag).  The hashtag is used as the asv name.</li>
+<li>The following filtering has been used
+<ul>
+<li>At least 10 reads for any asv</li>
+<li>Bootstrap value at class level &gt;= 90</li>
+</ul>
+</li>
+</ul>
+<h2 id="directories-and-files">Directories and files</h2>
+<ul>
+<li>functions_db.R: database function</li>
+<li>functions_metapr2.R: metapr2 function</li>
+<li>metaPR2 micropolar.Rmd: run to regenerate data (no need)</li>
+<li>/mysql : Configuration file to read from the MySQL dadabase</li>
+<li>/export : Files produced by R markdown file
+<ul>
+<li><strong>metapr2_asv_set_xxx_Eukaryota.fasta</strong>: fasta file with all asvs</li>
+<li><strong>metapr2_long_asv_set_xxx_Eukaryota.xlsx</strong>: long form of the dataset - each line corresponds to a different sample and different asv</li>
+<li><strong>metapr2_samples_asv_set_xxx.xlsx</strong>: list of all samples with metadata</li>
+<li><strong>metapr2_wide_asv_set_xxx_Eukaryota.xlsx</strong>: wide form of the dataset - each line corresponds to a different asv and columns correspond to samples</li>
+<li><strong>phyloseq_metapr2_asv_set_xxx_Eukaryota.rds</strong>: phyloseq file for all samples and asvs</li>
+</ul>
+</li>
+</ul>
+<h2 id="structure-of-the-phyloseq-object">Structure of the phyloseq object</h2>
+<ul>
+<li>otu_table()   OTU Table:         [ 7036 taxa and 196 samples ]</li>
+<li>sample_data() Sample Data:       [ 196 samples by 55 sample variables ]</li>
+<li>tax_table()   Taxonomy Table:    [ 7036 taxa by 8 taxonomic ranks ]</li>
+</ul>
+<h2 id="sample-variables">Sample variables</h2>
+<p>[1] &quot;sample_id&quot;                   &quot;file_name&quot;                   &quot;sample_name&quot;                 &quot;sample_code&quot;                 &quot;metadata_code&quot;<br>
+[6] &quot;replicate&quot;                   &quot;DNA_RNA&quot;                     &quot;fraction_name&quot;               &quot;fraction_min&quot;                &quot;fraction_max&quot;<br>
+[11] &quot;reads_total&quot;                 &quot;sample_remark&quot;               &quot;metadata_id&quot;                 &quot;project&quot;                     &quot;cruise&quot;<br>
+[16] &quot;station_id&quot;                  &quot;year&quot;                        &quot;date&quot;                        &quot;season&quot;                      &quot;depth_level&quot;<br>
+[21] &quot;depth&quot;                       &quot;substrate&quot;                   &quot;latitude&quot;                    &quot;longitude&quot;                   &quot;country&quot;<br>
+[26] &quot;oceanic_region&quot;              &quot;bottom_depth&quot;                &quot;temperature&quot;                 &quot;salinity&quot;                    &quot;O2&quot;<br>
+[31] &quot;fluorescence&quot;                &quot;Chla&quot;                        &quot;NO2&quot;                         &quot;NO3&quot;                         &quot;PO4&quot;<br>
+[36] &quot;Si&quot;                          &quot;bact_ml&quot;                     &quot;syn_ml&quot;                      &quot;peuk_ml&quot;                     &quot;neuk_ml&quot;<br>
+[41] &quot;crypto_ml&quot;                   &quot;virus_small_ml&quot;              &quot;virus_large_ml&quot;              &quot;dataset_code&quot;                &quot;dataset_name&quot;<br>
+[46] &quot;processing_pipeline_metapr2&quot; &quot;processing_date&quot;             &quot;sequencing_technology&quot;       &quot;sequencing_type&quot;             &quot;sequencing_company&quot;<br>
+[51] &quot;region&quot;                      &quot;ecosystem&quot;                   &quot;substrate_type&quot;              &quot;data_available&quot;              &quot;contact_name&quot;</p>
+
+    </body>
+    </html>

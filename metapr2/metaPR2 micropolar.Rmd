@@ -1,0 +1,57 @@
+---
+title: "MetaPR2 - MicroPolar"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+---
+
+
+## Libraries
+
+```{r, message=FALSE, warning=FALSE}
+
+# tidyr libraries
+
+  library(stringr)
+  library(dplyr)
+  library(tidyr)
+  library(tibble)
+
+# Import export library
+  library(rio)
+
+```
+
+## Load functions
+* Do not forget to use correct name for views...
+
+```{r, message=FALSE, warning=FALSE}
+source("functions_db.R")
+source("functions_metapr2.R")
+```
+
+
+# Download all the MicroPolar data from metapr2 taxmarc database
+* Bootstrap min value for class = 90 
+* At least 10 reads
+
+```{r}
+asv_set <- metapr2_export_asv(taxo_level = kingdom, taxo_name="Eukaryota",
+                               boot_level = class_boot, boot_min = 90,
+                               directory = "export/",
+                               dataset_id_selected = c(207,208,209),
+                               export_long_xls=TRUE,
+                               export_wide_xls=TRUE,
+                               export_sample_xls=TRUE,
+                               export_phyloseq = TRUE,
+                               export_fasta=TRUE,
+                               taxonomy_full = TRUE,
+                               use_hash = TRUE,
+                               sum_reads_min = 10)
+
+asv_set$ps
+
+sample_variables(asv_set$ps)
+
+```

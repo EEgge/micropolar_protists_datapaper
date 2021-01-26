@@ -1,0 +1,2664 @@
+# =================================
+# Swtiches to adjust the processing
+# =================================
+
+  do_cutadapt     <- TRUE
+  do_summary      <- TRUE
+  do_plot_quality <- TRUE
+  do_filtering <- TRUE # If TRUE and primers are present must also do_cutadapt = TRUE
+  do_dada2    <- TRUE
+  do_taxo <- TRUE
+  multithread <- TRUE
+  multithread_filter <- TRUE
+  bigdata <- TRUE
+  
+# =================================
+# Read the parameters 
+# =================================
+
+dataset_code <- "Tara_Arctic_V4"
+dataset_id <- 206
+dataset_path <- "/projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/" # Server
+
+pr2_file <- "/projet/umr7144/dipo/vaulot/metabarcodes/database/pr2_4.12.0/pr2_version_4.12.0_18S_dada2.fasta.gz"
+
+# -- File structure
+
+  paired_reads = TRUE
+  
+  file_identifier = ".fastq"  # String to identify the files to be processed.
+  R1_identifier = "_1.fastq"
+  R2_identifier = "_2.fastq"
+  file_name_separator = "_"
+# This the first character of the file name to consider to extract the sample name (usually = 1)
+  sample.names_first_character =  1
+
+
+# --  Other parameters
+# target
+  gene = "18S rRNA"
+  gene_region = "V4"
+  organelle = "nucleus"
+
+
+# primer sets (TAReuk454FWD1	CCAGCASCYGCGGTAATTCC	TAReukREV3	ACTTTCGTTCTTGATYRA) 
+# Only 50% of reads used because alternate directions
+  FWD = "CCAGCASCYGCGGTAATTCC"
+  REV = "ACTTTCGTTCTTGATYRA"
+
+  anchor = ""  # Put in front of primer to anchor primer at start of sequence
+  
+# parameters for filterAndTrim
+  sequencer = "Illumina"
+
+# parameters for filterAndTrim
+  truncLen = c(230,210) # This influences the number of ASVs and the percent of asv recovered (need to remove 20 and 21)
+  minLen = c(230,210)
+  truncQ = 2         
+  maxEE = c(10, 10) 
+  maxLen = 400  # This is for 454 to remove long and bad reads
+
+# Reduce the number of asvs for problematic cases
+  max_number_asvs = 0
+
+# parameters for removeBimeraDenovo
+  method_chimera = "pooled"
+
+
+
+
+
+R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS release 6.8 (Final)Red Hat Enterprise Linux Server release 6.5 (Santiago)
+
+Matrix products: default
+BLAS: /opt/6.x/R-3.5.1/lib64/R/lib/libRblas.so
+LAPACK: /opt/6.x/R-3.5.1/lib64/R/lib/libRlapack.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] optparse_1.6.6              purrr_0.3.4                
+ [3] readr_1.3.1                 tibble_3.0.0               
+ [5] tidyr_1.1.0                 dplyr_1.0.0                
+ [7] ggplot2_3.3.0               stringr_1.4.0              
+ [9] ShortRead_1.40.0            GenomicAlignments_1.18.1   
+[11] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
+[13] matrixStats_0.56.0          Biobase_2.42.0             
+[15] Rsamtools_1.34.1            GenomicRanges_1.34.0       
+[17] GenomeInfoDb_1.18.2         BiocParallel_1.16.6        
+[19] Biostrings_2.50.2           XVector_0.22.0             
+[21] IRanges_2.16.0              S4Vectors_0.20.1           
+[23] BiocGenerics_0.28.0         dada2_1.14.0               
+[25] Rcpp_1.0.4.6               
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.1.0       reshape2_1.4.3         lattice_0.20-40       
+ [4] colorspace_1.4-1       vctrs_0.3.0            generics_0.0.2        
+ [7] getopt_1.20.3          rlang_0.4.6            pillar_1.4.3          
+[10] glue_1.4.1             withr_2.2.0            RColorBrewer_1.1-2    
+[13] GenomeInfoDbData_1.2.0 lifecycle_0.2.0        plyr_1.8.6            
+[16] zlibbioc_1.28.0        munsell_0.5.0          gtable_0.3.0          
+[19] hwriter_1.3.2          latticeExtra_0.6-28    fansi_0.4.1           
+[22] scales_1.1.1           RcppParallel_5.0.0     hms_0.5.3             
+[25] stringi_1.4.6          grid_3.5.1             cli_2.0.2             
+[28] tools_3.5.1            bitops_1.0-6           magrittr_1.5          
+[31] RCurl_1.98-1.2         crayon_1.3.4           pkgconfig_2.0.3       
+[34] ellipsis_0.3.1         Matrix_1.2-18          assertthat_0.2.1      
+[37] R6_2.4.1               compiler_3.5.1        
+ [1] "ERR4223600" "ERR4223601" "ERR4223602" "ERR4223603" "ERR4223604"
+ [6] "ERR4223605" "ERR4223606" "ERR4223607" "ERR4223608" "ERR4223609"
+[11] "ERR4223610" "ERR4223611" "ERR4223612" "ERR4223613" "ERR4223614"
+[16] "ERR4223615" "ERR4223616" "ERR4223617" "ERR4223618" "ERR4223619"
+[21] "ERR4223620" "ERR4223621" "ERR4223622" "ERR4223623" "ERR4223624"
+[26] "ERR4223625" "ERR4223626" "ERR4223627"
+[1] "Finished with file: 1 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223600_1.fastq.gz 437488 sequences"
+[1] "Finished with file: 2 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223601_1.fastq.gz 427816 sequences"
+[1] "Finished with file: 3 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223602_1.fastq.gz 462210 sequences"
+[1] "Finished with file: 4 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223603_1.fastq.gz 450459 sequences"
+[1] "Finished with file: 5 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223604_1.fastq.gz 395203 sequences"
+[1] "Finished with file: 6 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223605_1.fastq.gz 384791 sequences"
+[1] "Finished with file: 7 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223606_1.fastq.gz 411105 sequences"
+[1] "Finished with file: 8 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223607_1.fastq.gz 403284 sequences"
+[1] "Finished with file: 9 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223608_1.fastq.gz 568212 sequences"
+[1] "Finished with file: 10 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223609_1.fastq.gz 555758 sequences"
+[1] "Finished with file: 11 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223610_1.fastq.gz 436010 sequences"
+[1] "Finished with file: 12 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223611_1.fastq.gz 426057 sequences"
+[1] "Finished with file: 13 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223612_1.fastq.gz 365150 sequences"
+[1] "Finished with file: 14 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223613_1.fastq.gz 358405 sequences"
+[1] "Finished with file: 15 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223614_1.fastq.gz 467944 sequences"
+[1] "Finished with file: 16 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223615_1.fastq.gz 454217 sequences"
+[1] "Finished with file: 17 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223616_1.fastq.gz 455683 sequences"
+[1] "Finished with file: 18 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223617_1.fastq.gz 443336 sequences"
+[1] "Finished with file: 19 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223618_1.fastq.gz 420451 sequences"
+[1] "Finished with file: 20 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223619_1.fastq.gz 409389 sequences"
+[1] "Finished with file: 21 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223620_1.fastq.gz 476605 sequences"
+[1] "Finished with file: 22 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223621_1.fastq.gz 464990 sequences"
+[1] "Finished with file: 23 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223622_1.fastq.gz 415099 sequences"
+[1] "Finished with file: 24 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223623_1.fastq.gz 404363 sequences"
+[1] "Finished with file: 25 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223624_1.fastq.gz 408568 sequences"
+[1] "Finished with file: 26 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223625_1.fastq.gz 398784 sequences"
+[1] "Finished with file: 27 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223626_1.fastq.gz 476854 sequences"
+[1] "Finished with file: 28 /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223627_1.fastq.gz 465412 sequences"
+                 Forward Complement Reverse RevComp
+FWD.ForwardReads  173219        182     181     332
+FWD.ReverseReads  199544        297     297     402
+REV.ForwardReads  168351        188     191     406
+REV.ReverseReads  188786        309     303     509
+2.8
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223600_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223600_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223600_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223600_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 13.17 s (30 us/read; 1.99 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            437,488
+  Read 1 with adapter:                 198,585 (45.4%)
+  Read 2 with adapter:                 203,895 (46.6%)
+Pairs that were too short:                  14 (0.0%)
+Pairs written (passing filters):       191,530 (43.8%)
+
+Total basepairs processed:   219,618,976 bp
+  Read 1:   109,809,488 bp
+  Read 2:   109,809,488 bp
+Total written (filtered):     88,354,805 bp (40.2%)
+  Read 1:    44,247,528 bp
+  Read 2:    44,107,277 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 198603 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	79	6835.8	0	79
+4	5	1708.9	0	5
+5	7	427.2	0	7
+6	3	106.8	0	3
+7	4	26.7	0	4
+8	7	6.7	0	7
+9	2	1.7	0	2
+10	30	0.4	1	26 4
+12	3	0.0	1	2 1
+13	39	0.0	1	34 5
+14	89	0.0	1	74 15
+15	32	0.0	1	15 17
+16	311	0.0	1	242 69
+17	144	0.0	1	87 57
+18	99	0.0	1	33 37 29
+19	1076	0.0	1	409 585 82
+20	196482	0.0	2	172943 15321 8218
+21	185	0.0	2	41 123 21
+22	4	0.0	2	0 0 4
+163	1	0.0	2	1
+164	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 388686 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	179261	6835.8	0	179261
+4	5942	1708.9	0	5942
+5	18	427.2	0	18
+6	1	106.8	0	1
+7	1	26.7	0	1
+11	1	0.1	1	1
+12	4	0.0	1	4
+15	8	0.0	1	5 3
+16	103	0.0	1	14 89
+17	8273	0.0	1	3278 4995
+18	194945	0.0	1	188361 6584
+19	124	0.0	1	20 104
+29	1	0.0	1	1
+30	1	0.0	1	1
+31	1	0.0	1	1
+34	1	0.0	1	1
+35	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223601_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223601_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223601_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223601_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.40 s (22 us/read; 2.73 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            427,816
+  Read 1 with adapter:                 191,857 (44.8%)
+  Read 2 with adapter:                 198,881 (46.5%)
+Pairs that were too short:                   2 (0.0%)
+Pairs written (passing filters):       183,897 (43.0%)
+
+Total basepairs processed:   214,763,632 bp
+  Read 1:   107,381,816 bp
+  Read 2:   107,381,816 bp
+Total written (filtered):     84,836,074 bp (39.5%)
+  Read 1:    42,484,106 bp
+  Read 2:    42,351,968 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 191881 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	99	6684.6	0	99
+4	8	1671.2	0	8
+5	13	417.8	0	13
+6	5	104.4	0	5
+7	1	26.1	0	1
+8	7	6.5	0	7
+9	6	1.6	0	5 1
+10	29	0.4	1	25 4
+11	2	0.1	1	2
+12	1	0.0	1	0 1
+13	27	0.0	1	24 3
+14	75	0.0	1	59 16
+15	49	0.0	1	23 26
+16	272	0.0	1	223 49
+17	124	0.0	1	73 51
+18	118	0.0	1	32 36 50
+19	1068	0.0	1	386 562 120
+20	189773	0.0	2	166493 15045 8235
+21	185	0.0	2	34 136 15
+22	13	0.0	2	0 1 12
+33	1	0.0	2	1
+65	1	0.0	2	1
+82	1	0.0	2	1
+89	1	0.0	2	1
+223	1	0.0	2	1
+225	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 378695 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	175988	6684.6	0	175988
+4	4285	1671.2	0	4285
+5	28	417.8	0	28
+7	4	26.1	0	4
+9	2	1.6	0	1 1
+11	5	0.1	1	4 1
+12	2	0.0	1	2
+13	1	0.0	1	1
+14	1	0.0	1	1
+15	4	0.0	1	3 1
+16	102	0.0	1	13 89
+17	8338	0.0	1	3150 5188
+18	189806	0.0	1	182967 6839
+19	127	0.0	1	16 111
+26	2	0.0	1	0 2
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223602_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223602_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223602_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223602_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 13.00 s (28 us/read; 2.13 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            462,210
+  Read 1 with adapter:                 210,746 (45.6%)
+  Read 2 with adapter:                 217,023 (47.0%)
+Pairs that were too short:                  22 (0.0%)
+Pairs written (passing filters):       203,956 (44.1%)
+
+Total basepairs processed:   232,029,420 bp
+  Read 1:   116,014,710 bp
+  Read 2:   116,014,710 bp
+Total written (filtered):     94,073,779 bp (40.5%)
+  Read 1:    47,118,000 bp
+  Read 2:    46,955,779 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 210764 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	82	7222.0	0	82
+4	8	1805.5	0	8
+5	4	451.4	0	4
+6	2	112.8	0	2
+7	1	28.2	0	1
+8	8	7.1	0	8
+9	6	1.8	0	6
+10	36	0.4	1	29 7
+11	1	0.1	1	0 1
+12	1	0.0	1	1
+13	37	0.0	1	32 5
+14	84	0.0	1	66 18
+15	41	0.0	1	21 20
+16	249	0.0	1	203 46
+17	156	0.0	1	97 59
+18	117	0.0	1	26 39 52
+19	1125	0.0	1	461 583 81
+20	208635	0.0	2	183650 16399 8586
+21	157	0.0	2	36 109 12
+22	9	0.0	2	1 0 8
+48	2	0.0	2	2
+122	1	0.0	2	1
+146	1	0.0	2	1
+200	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 417337 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	193867	7222.0	0	193867
+4	6824	1805.5	0	6824
+5	19	451.4	0	19
+6	2	112.8	0	2
+7	1	28.2	0	1
+8	2	7.1	0	2
+11	6	0.1	1	5 1
+12	2	0.0	1	2
+13	1	0.0	1	0 1
+14	4	0.0	1	2 2
+15	8	0.0	1	3 5
+16	73	0.0	1	9 64
+17	6465	0.0	1	3253 3212
+18	209930	0.0	1	203019 6911
+19	122	0.0	1	17 105
+26	2	0.0	1	1 1
+28	1	0.0	1	1
+30	1	0.0	1	1
+34	2	0.0	1	2
+35	4	0.0	1	4
+82	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223603_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223603_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223603_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223603_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 11.50 s (26 us/read; 2.35 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            450,459
+  Read 1 with adapter:                 202,688 (45.0%)
+  Read 2 with adapter:                 210,747 (46.8%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       194,734 (43.2%)
+
+Total basepairs processed:   226,130,418 bp
+  Read 1:   113,065,209 bp
+  Read 2:   113,065,209 bp
+Total written (filtered):     89,824,428 bp (39.7%)
+  Read 1:    44,987,591 bp
+  Read 2:    44,836,837 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 202705 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	115	7038.4	0	115
+4	6	1759.6	0	6
+5	8	439.9	0	8
+6	1	110.0	0	1
+7	3	27.5	0	3
+8	3	6.9	0	3
+10	23	0.4	1	21 2
+11	1	0.1	1	0 1
+12	1	0.0	1	0 1
+13	34	0.0	1	30 4
+14	72	0.0	1	58 14
+15	35	0.0	1	15 20
+16	259	0.0	1	208 51
+17	152	0.0	1	104 48
+18	128	0.0	1	38 39 51
+19	1131	0.0	1	437 580 114
+20	200556	0.0	2	176037 15880 8639
+21	165	0.0	2	38 109 18
+22	11	0.0	2	1 0 10
+76	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 404345 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	189092	7038.4	0	189092
+4	4870	1759.6	0	4870
+5	27	439.9	0	27
+6	1	110.0	0	1
+7	5	27.5	0	5
+11	4	0.1	1	4
+14	1	0.0	1	0 1
+15	4	0.0	1	2 2
+16	80	0.0	1	16 64
+17	6567	0.0	1	3052 3515
+18	203595	0.0	1	196372 7223
+19	93	0.0	1	17 76
+20	1	0.0	1	0 1
+25	1	0.0	1	0 1
+34	2	0.0	1	2
+54	1	0.0	1	1
+99	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223604_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223604_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223604_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223604_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.27 s (23 us/read; 2.56 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            395,203
+  Read 1 with adapter:                 180,456 (45.7%)
+  Read 2 with adapter:                 185,681 (47.0%)
+Pairs that were too short:                  19 (0.0%)
+Pairs written (passing filters):       174,212 (44.1%)
+
+Total basepairs processed:   198,391,906 bp
+  Read 1:    99,195,953 bp
+  Read 2:    99,195,953 bp
+Total written (filtered):     80,349,504 bp (40.5%)
+  Read 1:    40,245,104 bp
+  Read 2:    40,104,400 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 180466 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	65	6175.0	0	65
+4	2	1543.8	0	2
+5	6	385.9	0	6
+6	2	96.5	0	2
+8	4	6.0	0	4
+9	2	1.5	0	2
+10	25	0.4	1	23 2
+12	1	0.0	1	1
+13	21	0.0	1	19 2
+14	56	0.0	1	46 10
+15	37	0.0	1	17 20
+16	191	0.0	1	158 33
+17	90	0.0	1	46 44
+18	81	0.0	1	27 21 33
+19	715	0.0	1	237 422 56
+20	179031	0.0	2	157208 14336 7487
+21	122	0.0	2	37 78 7
+22	4	0.0	2	0 0 4
+30	1	0.0	2	0 1
+43	2	0.0	2	2
+70	2	0.0	2	2
+84	2	0.0	2	2
+121	1	0.0	2	1
+174	1	0.0	2	0 1
+199	2	0.0	2	2
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 358363 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	167273	6175.0	0	167273
+4	5767	1543.8	0	5767
+5	23	385.9	0	23
+6	1	96.5	0	1
+7	6	24.1	0	6
+9	1	1.5	0	1
+11	1	0.1	1	1
+12	3	0.0	1	2 1
+15	1	0.0	1	1
+16	70	0.0	1	7 63
+17	5790	0.0	1	2702 3088
+18	179356	0.0	1	173035 6321
+19	63	0.0	1	13 50
+28	1	0.0	1	0 1
+29	2	0.0	1	2
+30	1	0.0	1	1
+32	1	0.0	1	1
+33	1	0.0	1	0 1
+34	2	0.0	1	2
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223605_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223605_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223605_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223605_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 8.68 s (23 us/read; 2.66 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            384,791
+  Read 1 with adapter:                 173,396 (45.1%)
+  Read 2 with adapter:                 179,842 (46.7%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       166,200 (43.2%)
+
+Total basepairs processed:   193,165,082 bp
+  Read 1:    96,582,541 bp
+  Read 2:    96,582,541 bp
+Total written (filtered):     76,658,077 bp (39.7%)
+  Read 1:    38,394,873 bp
+  Read 2:    38,263,204 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 173407 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	100	6012.4	0	100
+4	3	1503.1	0	3
+5	4	375.8	0	4
+7	2	23.5	0	2
+8	8	5.9	0	8
+9	2	1.5	0	2
+10	20	0.4	1	19 1
+13	23	0.0	1	20 3
+14	55	0.0	1	51 4
+15	23	0.0	1	13 10
+16	183	0.0	1	146 37
+17	76	0.0	1	42 34
+18	63	0.0	1	7 23 33
+19	811	0.0	1	226 482 103
+20	171887	0.0	2	150361 13957 7569
+21	135	0.0	2	28 92 15
+22	6	0.0	2	0 0 6
+25	1	0.0	2	1
+82	1	0.0	2	0 0 1
+120	1	0.0	2	1
+152	1	0.0	2	1
+172	1	0.0	2	1
+192	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 346509 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	163007	6012.4	0	163007
+4	4009	1503.1	0	4009
+5	38	375.8	0	38
+6	1	93.9	0	1
+7	1	23.5	0	1
+11	3	0.1	1	3
+14	1	0.0	1	1
+15	4	0.0	1	4
+16	57	0.0	1	7 50
+17	5823	0.0	1	2514 3309
+18	173494	0.0	1	166835 6659
+19	69	0.0	1	7 62
+32	1	0.0	1	1
+34	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223606_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223606_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223606_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223606_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.53 s (23 us/read; 2.59 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            411,105
+  Read 1 with adapter:                 179,663 (43.7%)
+  Read 2 with adapter:                 184,529 (44.9%)
+Pairs that were too short:                  25 (0.0%)
+Pairs written (passing filters):       173,317 (42.2%)
+
+Total basepairs processed:   206,374,710 bp
+  Read 1:   103,187,355 bp
+  Read 2:   103,187,355 bp
+Total written (filtered):     79,934,981 bp (38.7%)
+  Read 1:    40,039,250 bp
+  Read 2:    39,895,731 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 179678 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	71	6423.5	0	71
+4	2	1605.9	0	2
+5	16	401.5	0	16
+6	4	100.4	0	4
+7	1	25.1	0	1
+8	8	6.3	0	8
+9	2	1.6	0	2
+10	19	0.4	1	18 1
+12	2	0.0	1	2
+13	33	0.0	1	31 2
+14	70	0.0	1	61 9
+15	30	0.0	1	10 20
+16	163	0.0	1	131 32
+17	86	0.0	1	42 44
+18	97	0.0	1	25 40 32
+19	839	0.0	1	198 571 70
+20	178043	0.0	2	156672 14085 7286
+21	173	0.0	2	52 104 17
+22	13	0.0	2	1 0 12
+25	2	0.0	2	0 1 1
+29	1	0.0	2	0 1
+140	1	0.0	2	1
+207	1	0.0	2	0 0 1
+251	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 357590 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	167993	6423.5	0	167993
+4	5426	1605.9	0	5426
+5	20	401.5	0	20
+6	1	100.4	0	1
+7	2	25.1	0	2
+11	4	0.1	1	4
+12	2	0.0	1	2
+13	3	0.0	1	3
+15	4	0.0	1	2 2
+16	104	0.0	1	17 87
+17	6734	0.0	1	3782 2952
+18	177195	0.0	1	171336 5859
+19	97	0.0	1	9 88
+30	2	0.0	1	2
+60	1	0.0	1	0 1
+61	1	0.0	1	0 1
+111	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223607_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223607_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223607_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223607_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 12.02 s (30 us/read; 2.01 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            403,284
+  Read 1 with adapter:                 174,137 (43.2%)
+  Read 2 with adapter:                 180,577 (44.8%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       166,822 (41.4%)
+
+Total basepairs processed:   202,448,568 bp
+  Read 1:   101,224,284 bp
+  Read 2:   101,224,284 bp
+Total written (filtered):     76,941,099 bp (38.0%)
+  Read 1:    38,538,172 bp
+  Read 2:    38,402,927 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 174156 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	107	6301.3	0	107
+4	7	1575.3	0	7
+5	9	393.8	0	9
+6	1	98.5	0	1
+7	3	24.6	0	3
+8	6	6.2	0	6
+9	2	1.5	0	2
+10	12	0.4	1	11 1
+12	2	0.0	1	2
+13	30	0.0	1	28 2
+14	51	0.0	1	46 5
+15	25	0.0	1	12 13
+16	166	0.0	1	127 39
+17	54	0.0	1	29 25
+18	105	0.0	1	30 38 37
+19	830	0.0	1	244 490 96
+20	172598	0.0	2	151214 13921 7463
+21	134	0.0	2	34 83 17
+22	9	0.0	2	0 1 8
+83	1	0.0	2	1
+177	1	0.0	2	1
+181	1	0.0	2	1
+196	2	0.0	2	1 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 349505 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	165345	6301.3	0	165345
+4	3891	1575.3	0	3891
+5	16	393.8	0	16
+6	1	98.5	0	1
+7	3	24.6	0	3
+11	3	0.1	1	3
+13	1	0.0	1	1
+14	2	0.0	1	0 2
+15	3	0.0	1	2 1
+16	78	0.0	1	15 63
+17	6784	0.0	1	3523 3261
+18	173273	0.0	1	166915 6358
+19	101	0.0	1	12 89
+29	1	0.0	1	0 1
+31	1	0.0	1	1
+32	1	0.0	1	1
+34	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223608_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223608_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223608_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223608_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 18.11 s (32 us/read; 1.88 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            568,212
+  Read 1 with adapter:                 252,530 (44.4%)
+  Read 2 with adapter:                 259,991 (45.8%)
+Pairs that were too short:                  26 (0.0%)
+Pairs written (passing filters):       243,619 (42.9%)
+
+Total basepairs processed:   285,242,424 bp
+  Read 1:   142,621,212 bp
+  Read 2:   142,621,212 bp
+Total written (filtered):    112,478,434 bp (39.4%)
+  Read 1:    56,281,003 bp
+  Read 2:    56,197,431 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 252545 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	115	8878.3	0	115
+4	10	2219.6	0	10
+5	13	554.9	0	13
+6	2	138.7	0	2
+7	4	34.7	0	4
+8	19	8.7	0	19
+9	6	2.2	0	6
+10	28	0.5	1	23 5
+12	3	0.0	1	2 1
+13	37	0.0	1	35 2
+14	126	0.0	1	96 30
+15	44	0.0	1	23 21
+16	343	0.0	1	278 65
+17	171	0.0	1	107 64
+18	154	0.0	1	36 60 58
+19	1235	0.0	1	485 668 82
+20	249998	0.0	2	219498 20014 10486
+21	225	0.0	2	50 149 26
+82	2	0.0	2	2
+83	2	0.0	2	2
+84	1	0.0	2	1
+156	1	0.0	2	1
+157	1	0.0	2	1
+172	1	0.0	2	1
+199	1	0.0	2	1
+204	1	0.0	2	0 1
+223	2	0.0	2	2
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 455838 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	173408	8878.3	0	173408
+4	22973	2219.6	0	22973
+5	120	554.9	0	120
+6	1	138.7	0	1
+9	4	2.2	0	4
+11	5	0.1	1	4 1
+15	6	0.0	1	2 4
+16	97	0.0	1	22 75
+17	8236	0.0	1	3720 4516
+18	250434	0.0	1	242088 8346
+19	548	0.0	1	25 523
+28	1	0.0	1	0 1
+30	1	0.0	1	1
+31	1	0.0	1	1
+34	1	0.0	1	1
+36	1	0.0	1	1
+197	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223609_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223609_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223609_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223609_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 20.44 s (37 us/read; 1.63 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            555,758
+  Read 1 with adapter:                 244,303 (44.0%)
+  Read 2 with adapter:                 253,801 (45.7%)
+Pairs that were too short:                   4 (0.0%)
+Pairs written (passing filters):       234,060 (42.1%)
+
+Total basepairs processed:   278,990,516 bp
+  Read 1:   139,495,258 bp
+  Read 2:   139,495,258 bp
+Total written (filtered):    108,067,122 bp (38.7%)
+  Read 1:    54,072,666 bp
+  Read 2:    53,994,456 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 244326 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	153	8683.7	0	153
+4	12	2170.9	0	12
+5	9	542.7	0	9
+6	3	135.7	0	3
+7	3	33.9	0	3
+8	8	8.5	0	8
+9	2	2.1	0	1 1
+10	32	0.5	1	29 3
+12	1	0.0	1	1
+13	44	0.0	1	39 5
+14	88	0.0	1	72 16
+15	58	0.0	1	29 29
+16	268	0.0	1	221 47
+17	177	0.0	1	112 65
+18	158	0.0	1	48 46 64
+19	1311	0.0	1	431 710 170
+20	241778	0.0	2	211824 19692 10262
+21	201	0.0	2	46 139 16
+22	11	0.0	2	1 0 10
+30	1	0.0	2	1
+70	1	0.0	2	1
+80	1	0.0	2	1
+82	1	0.0	2	1
+152	1	0.0	2	1
+189	1	0.0	2	1
+218	1	0.0	2	1
+219	1	0.0	2	0 0 1
+251	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 444939 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	170952	8683.7	0	170952
+4	20695	2170.9	0	20695
+5	135	542.7	0	135
+6	1	135.7	0	1
+7	3	33.9	0	3
+9	2	2.1	0	2
+11	2	0.1	1	1 1
+12	5	0.0	1	4 1
+14	1	0.0	1	0 1
+15	1	0.0	1	0 1
+16	78	0.0	1	14 64
+17	8504	0.0	1	3507 4997
+18	243970	0.0	1	235142 8828
+19	584	0.0	1	23 561
+28	1	0.0	1	1
+35	4	0.0	1	4
+87	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223610_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223610_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223610_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223610_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 14.28 s (33 us/read; 1.83 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            436,010
+  Read 1 with adapter:                 202,349 (46.4%)
+  Read 2 with adapter:                 207,022 (47.5%)
+Pairs that were too short:                  31 (0.0%)
+Pairs written (passing filters):       194,738 (44.7%)
+
+Total basepairs processed:   218,877,020 bp
+  Read 1:   109,438,510 bp
+  Read 2:   109,438,510 bp
+Total written (filtered):     89,806,748 bp (41.0%)
+  Read 1:    44,988,128 bp
+  Read 2:    44,818,620 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 202362 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	67	6812.7	0	67
+4	1	1703.2	0	1
+5	7	425.8	0	7
+6	3	106.4	0	3
+7	2	26.6	0	2
+8	4	6.7	0	4
+9	2	1.7	0	2
+10	17	0.4	1	14 3
+12	3	0.0	1	2 1
+13	29	0.0	1	28 1
+14	86	0.0	1	66 20
+15	21	0.0	1	9 12
+16	269	0.0	1	214 55
+17	129	0.0	1	76 53
+18	111	0.0	1	37 39 35
+19	951	0.0	1	309 557 85
+20	200478	0.0	2	176087 15966 8425
+21	171	0.0	2	35 120 16
+22	7	0.0	2	0 0 7
+65	1	0.0	2	0 1
+196	2	0.0	2	1 1
+218	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 402123 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	184981	6812.7	0	184981
+4	10356	1703.2	0	10356
+5	44	425.8	0	44
+6	1	106.4	0	1
+7	3	26.6	0	3
+11	1	0.1	1	1
+15	4	0.0	1	2 2
+16	70	0.0	1	11 59
+17	6206	0.0	1	3844 2362
+18	200371	0.0	1	192955 7416
+19	78	0.0	1	19 59
+26	1	0.0	1	0 1
+29	2	0.0	1	0 2
+34	2	0.0	1	2
+61	1	0.0	1	1
+67	1	0.0	1	0 1
+196	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223611_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223611_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223611_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223611_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 14.14 s (33 us/read; 1.81 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            426,057
+  Read 1 with adapter:                 194,887 (45.7%)
+  Read 2 with adapter:                 201,232 (47.2%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       186,219 (43.7%)
+
+Total basepairs processed:   213,880,614 bp
+  Read 1:   106,940,307 bp
+  Read 2:   106,940,307 bp
+Total written (filtered):     85,881,478 bp (40.2%)
+  Read 1:    43,020,491 bp
+  Read 2:    42,860,987 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 194913 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	144	6657.1	0	144
+4	6	1664.3	0	6
+5	5	416.1	0	5
+6	1	104.0	0	1
+7	2	26.0	0	2
+8	8	6.5	0	8
+9	6	1.6	0	6
+10	21	0.4	1	18 3
+13	33	0.0	1	28 5
+14	75	0.0	1	67 8
+15	34	0.0	1	19 15
+16	270	0.0	1	215 55
+17	112	0.0	1	76 36
+18	86	0.0	1	26 29 31
+19	996	0.0	1	314 569 113
+20	192957	0.0	2	168711 15776 8470
+21	145	0.0	2	33 97 15
+22	9	0.0	2	0 0 9
+23	1	0.0	2	1
+70	1	0.0	2	1
+105	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 390608 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	181442	6657.1	0	181442
+4	8169	1664.3	0	8169
+5	42	416.1	0	42
+7	3	26.0	0	3
+8	2	6.5	0	2
+10	3	0.4	1	2 1
+11	4	0.1	1	3 1
+12	1	0.0	1	0 1
+14	1	0.0	1	0 1
+15	5	0.0	1	5
+16	78	0.0	1	12 66
+17	6291	0.0	1	3644 2647
+18	194471	0.0	1	186669 7802
+19	93	0.0	1	22 71
+24	1	0.0	1	0 1
+31	1	0.0	1	1
+34	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223612_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223612_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223612_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223612_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 12.81 s (35 us/read; 1.71 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            365,150
+  Read 1 with adapter:                 167,136 (45.8%)
+  Read 2 with adapter:                 171,918 (47.1%)
+Pairs that were too short:                  18 (0.0%)
+Pairs written (passing filters):       161,182 (44.1%)
+
+Total basepairs processed:   183,305,300 bp
+  Read 1:    91,652,650 bp
+  Read 2:    91,652,650 bp
+Total written (filtered):     74,343,596 bp (40.6%)
+  Read 1:    37,235,469 bp
+  Read 2:    37,108,127 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 167148 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	64	5705.5	0	64
+4	1	1426.4	0	1
+5	8	356.6	0	8
+6	5	89.1	0	5
+8	3	5.6	0	3
+9	1	1.4	0	1
+10	23	0.3	1	19 4
+11	2	0.1	1	1 1
+12	2	0.0	1	1 1
+13	25	0.0	1	22 3
+14	53	0.0	1	44 9
+15	26	0.0	1	10 16
+16	202	0.0	1	169 33
+17	131	0.0	1	84 47
+18	96	0.0	1	35 27 34
+19	846	0.0	1	296 467 83
+20	165500	0.0	2	145633 13075 6792
+21	150	0.0	2	26 111 13
+22	4	0.0	2	0 0 4
+61	1	0.0	2	0 0 1
+109	1	0.0	2	1
+133	1	0.0	2	1
+151	1	0.0	2	1
+194	2	0.0	2	2
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 330902 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	154167	5705.5	0	154167
+4	5166	1426.4	0	5166
+5	29	356.6	0	29
+7	2	22.3	0	2
+11	1	0.1	1	1
+12	1	0.0	1	1
+14	2	0.0	1	1 1
+15	2	0.0	1	2
+16	75	0.0	1	7 68
+17	6530	0.0	1	1969 4561
+18	164836	0.0	1	159390 5446
+19	84	0.0	1	14 70
+31	1	0.0	1	1
+121	1	0.0	1	0 1
+135	4	0.0	1	0 4
+137	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223613_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223613_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223613_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223613_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.89 s (28 us/read; 2.17 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            358,405
+  Read 1 with adapter:                 162,669 (45.4%)
+  Read 2 with adapter:                 169,224 (47.2%)
+Pairs that were too short:                   4 (0.0%)
+Pairs written (passing filters):       155,930 (43.5%)
+
+Total basepairs processed:   179,919,310 bp
+  Read 1:    89,959,655 bp
+  Read 2:    89,959,655 bp
+Total written (filtered):     71,925,435 bp (40.0%)
+  Read 1:    36,022,848 bp
+  Read 2:    35,902,587 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 162682 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	94	5600.1	0	94
+4	6	1400.0	0	6
+5	6	350.0	0	6
+8	5	5.5	0	5
+9	1	1.4	0	1
+10	22	0.3	1	21 1
+11	1	0.1	1	1
+13	19	0.0	1	16 3
+14	71	0.0	1	54 17
+15	22	0.0	1	14 8
+16	217	0.0	1	170 47
+17	130	0.0	1	84 46
+18	79	0.0	1	27 27 25
+19	900	0.0	1	308 495 97
+20	160925	0.0	2	140800 13039 7086
+21	167	0.0	2	51 104 12
+22	6	0.0	2	0 0 6
+32	1	0.0	2	1
+70	1	0.0	2	1
+73	3	0.0	2	3
+108	1	0.0	2	1
+185	1	0.0	2	1
+207	1	0.0	2	1
+229	1	0.0	2	1
+230	1	0.0	2	1
+244	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 325239 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	152760	5600.1	0	152760
+4	3634	1400.0	0	3634
+5	27	350.0	0	27
+6	2	87.5	0	2
+7	2	21.9	0	2
+8	1	5.5	0	1
+11	4	0.1	1	3 1
+12	2	0.0	1	2
+14	3	0.0	1	2 1
+15	5	0.0	1	2 3
+16	64	0.0	1	9 55
+17	6756	0.0	1	1975 4781
+18	161912	0.0	1	156065 5847
+19	67	0.0	1	15 52
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223614_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223614_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223614_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223614_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 16.52 s (35 us/read; 1.70 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            467,944
+  Read 1 with adapter:                 216,373 (46.2%)
+  Read 2 with adapter:                 221,772 (47.4%)
+Pairs that were too short:                  21 (0.0%)
+Pairs written (passing filters):       208,587 (44.6%)
+
+Total basepairs processed:   234,907,888 bp
+  Read 1:   117,453,944 bp
+  Read 2:   117,453,944 bp
+Total written (filtered):     96,196,667 bp (41.0%)
+  Read 1:    48,187,545 bp
+  Read 2:    48,009,122 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 216384 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	81	7311.6	0	81
+4	7	1827.9	0	7
+5	9	457.0	0	9
+7	2	28.6	0	2
+8	5	7.1	0	5
+9	4	1.8	0	4
+10	23	0.4	1	18 5
+11	1	0.1	1	0 1
+12	2	0.0	1	1 1
+13	38	0.0	1	33 5
+14	98	0.0	1	82 16
+15	50	0.0	1	21 29
+16	290	0.0	1	240 50
+17	156	0.0	1	91 65
+18	113	0.0	1	29 38 46
+19	994	0.0	1	354 559 81
+20	214314	0.0	2	188528 17002 8784
+21	183	0.0	2	29 140 14
+22	5	0.0	2	1 0 4
+45	1	0.0	2	1
+70	1	0.0	2	1
+154	1	0.0	2	0 1
+195	1	0.0	2	1
+208	1	0.0	2	1
+214	1	0.0	2	1
+228	1	0.0	2	1
+240	1	0.0	2	1
+251	1	0.0	2	0 0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 432201 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	202246	7311.6	0	202246
+4	8472	1827.9	0	8472
+5	23	457.0	0	23
+6	1	114.2	0	1
+7	4	28.6	0	4
+8	1	7.1	0	1
+9	2	1.8	0	1 1
+11	1	0.1	1	1
+13	2	0.0	1	2
+14	1	0.0	1	0 1
+15	9	0.0	1	4 5
+16	146	0.0	1	13 133
+17	10904	0.0	1	4181 6723
+18	210327	0.0	1	202743 7584
+19	61	0.0	1	19 42
+26	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223615_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223615_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223615_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223615_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 10.06 s (22 us/read; 2.71 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            454,217
+  Read 1 with adapter:                 207,349 (45.6%)
+  Read 2 with adapter:                 214,648 (47.3%)
+Pairs that were too short:                   3 (0.0%)
+Pairs written (passing filters):       198,760 (43.8%)
+
+Total basepairs processed:   228,016,934 bp
+  Read 1:   114,008,467 bp
+  Read 2:   114,008,467 bp
+Total written (filtered):     91,668,006 bp (40.2%)
+  Read 1:    45,918,033 bp
+  Read 2:    45,749,973 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 207368 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	129	7097.1	0	129
+4	2	1774.3	0	2
+5	8	443.6	0	8
+6	1	110.9	0	1
+7	4	27.7	0	4
+8	7	6.9	0	7
+9	4	1.7	0	3 1
+10	29	0.4	1	27 2
+13	42	0.0	1	38 4
+14	99	0.0	1	75 24
+15	41	0.0	1	17 24
+16	270	0.0	1	223 47
+17	115	0.0	1	62 53
+18	124	0.0	1	45 26 53
+19	1106	0.0	1	335 643 128
+20	205200	0.0	2	180163 16213 8824
+21	171	0.0	2	20 133 18
+22	8	0.0	2	0 0 8
+23	1	0.0	2	0 1
+33	2	0.0	2	2
+69	1	0.0	2	1
+163	1	0.0	2	1
+193	1	0.0	2	0 1
+198	1	0.0	2	0 0 1
+210	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 417737 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	197078	7097.1	0	197078
+4	6251	1774.3	0	6251
+5	42	443.6	0	42
+7	2	27.7	0	2
+8	1	6.9	0	1
+9	2	1.7	0	2
+10	1	0.4	1	1
+11	6	0.1	1	6
+12	1	0.0	1	1
+13	2	0.0	1	1 1
+14	1	0.0	1	0 1
+15	5	0.0	1	2 3
+16	148	0.0	1	10 138
+17	10525	0.0	1	3689 6836
+18	203584	0.0	1	195568 8016
+19	84	0.0	1	17 67
+30	1	0.0	1	1
+34	2	0.0	1	2
+139	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223616_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223616_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223616_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223616_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 11.00 s (24 us/read; 2.48 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            455,683
+  Read 1 with adapter:                 213,300 (46.8%)
+  Read 2 with adapter:                 218,360 (47.9%)
+Pairs that were too short:                  25 (0.0%)
+Pairs written (passing filters):       205,315 (45.1%)
+
+Total basepairs processed:   228,752,866 bp
+  Read 1:   114,376,433 bp
+  Read 2:   114,376,433 bp
+Total written (filtered):     94,727,557 bp (41.4%)
+  Read 1:    47,432,403 bp
+  Read 2:    47,295,154 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 213315 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	78	7120.0	0	78
+4	6	1780.0	0	6
+5	10	445.0	0	10
+6	6	111.3	0	6
+7	2	27.8	0	2
+8	12	7.0	0	12
+9	5	1.7	0	4 1
+10	26	0.4	1	24 2
+11	1	0.1	1	0 1
+12	2	0.0	1	2
+13	45	0.0	1	42 3
+14	100	0.0	1	80 20
+15	62	0.0	1	29 33
+16	281	0.0	1	231 50
+17	158	0.0	1	104 54
+18	113	0.0	1	24 32 57
+19	1109	0.0	1	409 616 84
+20	211103	0.0	2	185636 16591 8876
+21	188	0.0	2	29 136 23
+22	6	0.0	2	0 0 6
+33	1	0.0	2	0 1
+70	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 413169 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	188729	7120.0	0	188729
+4	6452	1780.0	0	6452
+5	25	445.0	0	25
+6	1	111.3	0	1
+7	1	27.8	0	1
+9	2	1.7	0	2
+14	2	0.0	1	0 2
+15	7	0.0	1	7
+16	215	0.0	1	8 207
+17	13841	0.0	1	3306 10535
+18	203750	0.0	1	196844 6906
+19	139	0.0	1	19 120
+26	1	0.0	1	0 1
+28	1	0.0	1	1
+30	2	0.0	1	2
+34	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223617_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223617_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223617_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223617_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 14.07 s (32 us/read; 1.89 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            443,336
+  Read 1 with adapter:                 204,371 (46.1%)
+  Read 2 with adapter:                 211,623 (47.7%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       195,375 (44.1%)
+
+Total basepairs processed:   222,554,672 bp
+  Read 1:   111,277,336 bp
+  Read 2:   111,277,336 bp
+Total written (filtered):     90,144,480 bp (40.5%)
+  Read 1:    45,136,271 bp
+  Read 2:    45,008,209 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 204397 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	149	6927.1	0	149
+4	10	1731.8	0	10
+5	10	432.9	0	10
+6	1	108.2	0	1
+7	5	27.1	0	5
+8	10	6.8	0	10
+9	4	1.7	0	4
+10	25	0.4	1	20 5
+12	4	0.0	1	4
+13	34	0.0	1	30 4
+14	89	0.0	1	68 21
+15	52	0.0	1	32 20
+16	297	0.0	1	234 63
+17	177	0.0	1	114 63
+18	116	0.0	1	33 29 54
+19	1107	0.0	1	356 610 141
+20	202144	0.0	2	177213 16100 8831
+21	151	0.0	2	28 112 11
+22	10	0.0	2	0 0 10
+39	1	0.0	2	1
+85	1	0.0	2	0 0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 399885 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	184008	6927.1	0	184008
+4	4592	1731.8	0	4592
+5	30	432.9	0	30
+6	1	108.2	0	1
+7	6	27.1	0	6
+9	1	1.7	0	1
+10	1	0.4	1	0 1
+11	2	0.1	1	1 1
+13	2	0.0	1	2
+14	6	0.0	1	4 2
+15	9	0.0	1	6 3
+16	192	0.0	1	18 174
+17	13351	0.0	1	2975 10376
+18	197505	0.0	1	190261 7244
+19	171	0.0	1	18 153
+29	2	0.0	1	0 2
+30	3	0.0	1	2 1
+32	1	0.0	1	1
+35	1	0.0	1	1
+81	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223618_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223618_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223618_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223618_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.75 s (23 us/read; 2.59 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            420,451
+  Read 1 with adapter:                 191,318 (45.5%)
+  Read 2 with adapter:                 195,435 (46.5%)
+Pairs that were too short:                  28 (0.0%)
+Pairs written (passing filters):       183,670 (43.7%)
+
+Total basepairs processed:   211,066,402 bp
+  Read 1:   105,533,201 bp
+  Read 2:   105,533,201 bp
+Total written (filtered):     84,704,462 bp (40.1%)
+  Read 1:    42,430,639 bp
+  Read 2:    42,273,823 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 191358 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	79	6569.5	0	79
+4	5	1642.4	0	5
+5	8	410.6	0	8
+6	4	102.6	0	4
+7	7	25.7	0	7
+8	12	6.4	0	12
+9	1	1.6	0	1
+10	26	0.4	1	23 3
+11	1	0.1	1	0 1
+12	3	0.0	1	3
+13	40	0.0	1	36 4
+14	109	0.0	1	87 22
+15	33	0.0	1	14 19
+16	291	0.0	1	217 74
+17	212	0.0	1	134 78
+18	118	0.0	1	24 44 50
+19	890	0.0	1	306 511 73
+20	189339	0.0	2	166643 15004 7692
+21	146	0.0	2	23 111 12
+22	7	0.0	2	0 0 7
+23	1	0.0	2	1
+26	1	0.0	2	1
+92	1	0.0	2	1
+93	7	0.0	2	2 1 4
+94	4	0.0	2	3 1
+113	3	0.0	2	3
+159	1	0.0	2	1
+192	1	0.0	2	1
+199	2	0.0	2	1 1
+202	1	0.0	2	0 1
+212	3	0.0	2	2 1
+221	2	0.0	2	2
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 380869 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	179446	6569.5	0	179446
+4	6244	1642.4	0	6244
+5	22	410.6	0	22
+6	7	102.6	0	7
+7	3	25.7	0	3
+10	2	0.4	1	0 2
+11	2	0.1	1	2
+14	3	0.0	1	2 1
+15	6	0.0	1	3 3
+16	108	0.0	1	20 88
+17	8369	0.0	1	3447 4922
+18	186571	0.0	1	179864 6707
+19	86	0.0	1	29 57
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223619_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223619_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223619_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223619_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 12.68 s (31 us/read; 1.94 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            409,389
+  Read 1 with adapter:                 184,517 (45.1%)
+  Read 2 with adapter:                 190,373 (46.5%)
+Pairs that were too short:                   6 (0.0%)
+Pairs written (passing filters):       175,956 (43.0%)
+
+Total basepairs processed:   205,513,278 bp
+  Read 1:   102,756,639 bp
+  Read 2:   102,756,639 bp
+Total written (filtered):     81,149,762 bp (39.5%)
+  Read 1:    40,648,751 bp
+  Read 2:    40,501,011 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 184560 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	110	6396.7	0	110
+4	10	1599.2	0	10
+5	7	399.8	0	7
+6	5	99.9	0	5
+7	5	25.0	0	5
+8	9	6.2	0	9
+9	2	1.6	0	2
+10	28	0.4	1	23 5
+11	3	0.1	1	0 3
+13	36	0.0	1	32 4
+14	85	0.0	1	69 16
+15	34	0.0	1	20 14
+16	272	0.0	1	223 49
+17	212	0.0	1	153 59
+18	111	0.0	1	34 32 45
+19	907	0.0	1	252 538 117
+20	182555	0.0	2	159892 14672 7991
+21	135	0.0	2	24 96 15
+22	11	0.0	2	0 0 11
+23	1	0.0	2	1
+82	1	0.0	2	1
+92	1	0.0	2	1
+93	10	0.0	2	4 0 6
+97	1	0.0	2	0 0 1
+112	1	0.0	2	1
+113	1	0.0	2	1
+195	1	0.0	2	1
+197	2	0.0	2	2
+203	1	0.0	2	1
+212	1	0.0	2	1
+215	1	0.0	2	1
+231	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 370609 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	176059	6396.7	0	176059
+4	4433	1599.2	0	4433
+5	31	399.8	0	31
+6	3	99.9	0	3
+7	3	25.0	0	3
+8	1	6.2	0	1
+11	3	0.1	1	3
+12	2	0.0	1	2
+14	6	0.0	1	0 6
+15	5	0.0	1	2 3
+16	109	0.0	1	9 100
+17	8261	0.0	1	3153 5108
+18	181615	0.0	1	174250 7365
+19	74	0.0	1	18 56
+20	1	0.0	1	0 1
+29	1	0.0	1	1
+30	1	0.0	1	1
+35	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223620_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223620_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223620_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223620_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 12.48 s (26 us/read; 2.29 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            476,605
+  Read 1 with adapter:                 210,610 (44.2%)
+  Read 2 with adapter:                 216,170 (45.4%)
+Pairs that were too short:                  27 (0.0%)
+Pairs written (passing filters):       202,674 (42.5%)
+
+Total basepairs processed:   239,255,710 bp
+  Read 1:   119,627,855 bp
+  Read 2:   119,627,855 bp
+Total written (filtered):     93,492,727 bp (39.1%)
+  Read 1:    46,821,286 bp
+  Read 2:    46,671,441 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 210624 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	90	7447.0	0	90
+4	9	1861.7	0	9
+5	11	465.4	0	11
+6	2	116.4	0	2
+7	4	29.1	0	4
+8	6	7.3	0	6
+10	29	0.5	1	25 4
+12	4	0.0	1	4
+13	23	0.0	1	18 5
+14	68	0.0	1	56 12
+15	45	0.0	1	20 25
+16	274	0.0	1	218 56
+17	178	0.0	1	124 54
+18	96	0.0	1	31 28 37
+19	951	0.0	1	362 517 72
+20	208629	0.0	2	183190 16685 8754
+21	191	0.0	2	46 137 8
+22	6	0.0	2	0 0 6
+32	1	0.0	2	1
+33	1	0.0	2	1
+73	1	0.0	2	1
+136	1	0.0	2	1
+166	1	0.0	2	1
+172	1	0.0	2	1
+203	1	0.0	2	1
+230	1	0.0	2	0 0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 414304 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	192008	7447.0	0	192008
+4	6621	1861.7	0	6621
+5	18	465.4	0	18
+6	2	116.4	0	2
+7	2	29.1	0	2
+8	3	7.3	0	3
+11	6	0.1	1	4 2
+14	1	0.0	1	1
+15	8	0.0	1	2 6
+16	169	0.0	1	11 158
+17	13528	0.0	1	2815 10713
+18	201872	0.0	1	194773 7099
+19	64	0.0	1	9 55
+30	1	0.0	1	1
+61	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223621_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223621_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223621_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223621_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.16 s (20 us/read; 3.05 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            464,990
+  Read 1 with adapter:                 202,961 (43.6%)
+  Read 2 with adapter:                 209,934 (45.1%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       193,876 (41.7%)
+
+Total basepairs processed:   233,424,980 bp
+  Read 1:   116,712,490 bp
+  Read 2:   116,712,490 bp
+Total written (filtered):     89,437,568 bp (38.3%)
+  Read 1:    44,789,271 bp
+  Read 2:    44,648,297 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 202983 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	137	7265.5	0	137
+4	6	1816.4	0	6
+5	6	454.1	0	6
+7	3	28.4	0	3
+8	9	7.1	0	9
+9	3	1.8	0	3
+10	25	0.4	1	22 3
+13	24	0.0	1	24
+14	63	0.0	1	55 8
+15	32	0.0	1	12 20
+16	297	0.0	1	243 54
+17	132	0.0	1	84 48
+18	93	0.0	1	22 32 39
+19	1054	0.0	1	357 577 120
+20	200937	0.0	2	176158 16219 8560
+21	150	0.0	2	28 102 20
+22	10	0.0	2	0 0 10
+41	1	0.0	2	0 1
+172	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 401860 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	187636	7265.5	0	187636
+4	4819	1816.4	0	4819
+5	21	454.1	0	21
+6	6	113.5	0	6
+7	5	28.4	0	5
+10	2	0.4	1	1 1
+11	7	0.1	1	7
+13	1	0.0	1	1
+14	1	0.0	1	1
+15	7	0.0	1	6 1
+16	147	0.0	1	13 134
+17	13292	0.0	1	2592 10700
+18	195835	0.0	1	188394 7441
+19	78	0.0	1	21 57
+26	1	0.0	1	0 1
+34	1	0.0	1	1
+60	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223622_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223622_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223622_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223622_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 10.17 s (25 us/read; 2.45 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            415,099
+  Read 1 with adapter:                 195,260 (47.0%)
+  Read 2 with adapter:                 199,614 (48.1%)
+Pairs that were too short:                  20 (0.0%)
+Pairs written (passing filters):       187,566 (45.2%)
+
+Total basepairs processed:   208,379,698 bp
+  Read 1:   104,189,849 bp
+  Read 2:   104,189,849 bp
+Total written (filtered):     86,564,347 bp (41.5%)
+  Read 1:    43,331,559 bp
+  Read 2:    43,232,788 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 195275 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	80	6485.9	0	80
+4	12	1621.5	0	12
+5	10	405.4	0	10
+6	2	101.3	0	2
+7	2	25.3	0	2
+8	9	6.3	0	9
+9	6	1.6	0	6
+10	27	0.4	1	21 6
+11	1	0.1	1	0 1
+12	4	0.0	1	2 2
+13	39	0.0	1	34 5
+14	92	0.0	1	76 16
+15	33	0.0	1	14 19
+16	244	0.0	1	184 60
+17	144	0.0	1	87 57
+18	118	0.0	1	41 34 43
+19	824	0.0	1	215 525 84
+20	193440	0.0	2	170380 15161 7899
+21	173	0.0	2	21 146 6
+22	8	0.0	2	0 0 8
+23	2	0.0	2	0 1 1
+34	1	0.0	2	1
+67	1	0.0	2	1
+102	1	0.0	2	1
+207	1	0.0	2	1
+248	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 371077 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	165601	6485.9	0	165601
+4	6257	1621.5	0	6257
+5	18	405.4	0	18
+7	1	25.3	0	1
+8	2	6.3	0	2
+11	3	0.1	1	3
+13	2	0.0	1	0 2
+14	3	0.0	1	0 3
+15	4	0.0	1	3 1
+16	249	0.0	1	18 231
+17	20714	0.0	1	2344 18370
+18	178104	0.0	1	172248 5856
+19	111	0.0	1	16 95
+20	1	0.0	1	0 1
+30	1	0.0	1	1
+34	3	0.0	1	3
+61	3	0.0	1	0 3
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223623_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223623_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223623_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223623_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.32 s (23 us/read; 2.60 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            404,363
+  Read 1 with adapter:                 188,619 (46.6%)
+  Read 2 with adapter:                 194,705 (48.2%)
+Pairs that were too short:                   1 (0.0%)
+Pairs written (passing filters):       180,180 (44.6%)
+
+Total basepairs processed:   202,990,226 bp
+  Read 1:   101,495,113 bp
+  Read 2:   101,495,113 bp
+Total written (filtered):     83,158,224 bp (41.0%)
+  Read 1:    41,625,479 bp
+  Read 2:    41,532,745 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 188637 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	124	6318.2	0	124
+4	2	1579.5	0	2
+5	10	394.9	0	10
+6	1	98.7	0	1
+7	2	24.7	0	2
+8	13	6.2	0	13
+9	5	1.5	0	5
+10	31	0.4	1	28 3
+13	24	0.0	1	21 3
+14	84	0.0	1	70 14
+15	32	0.0	1	23 9
+16	264	0.0	1	201 63
+17	108	0.0	1	62 46
+18	104	0.0	1	31 33 40
+19	833	0.0	1	187 519 127
+20	186821	0.0	2	163865 14892 8064
+21	167	0.0	2	40 110 17
+22	8	0.0	2	0 0 8
+33	2	0.0	2	2
+163	1	0.0	2	1
+242	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 361626 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	162593	6318.2	0	162593
+4	4687	1579.5	0	4687
+5	31	394.9	0	31
+6	1	98.7	0	1
+7	1	24.7	0	1
+10	3	0.4	1	1 2
+11	3	0.1	1	2 1
+14	2	0.0	1	0 2
+15	9	0.0	1	2 7
+16	219	0.0	1	13 206
+17	20469	0.0	1	2107 18362
+18	173458	0.0	1	167066 6392
+19	144	0.0	1	13 131
+20	1	0.0	1	0 1
+26	1	0.0	1	0 1
+34	3	0.0	1	3
+63	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223624_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223624_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223624_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223624_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 10.77 s (26 us/read; 2.28 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            408,568
+  Read 1 with adapter:                 192,626 (47.1%)
+  Read 2 with adapter:                 198,542 (48.6%)
+Pairs that were too short:                  22 (0.0%)
+Pairs written (passing filters):       186,170 (45.6%)
+
+Total basepairs processed:   205,101,136 bp
+  Read 1:   102,550,568 bp
+  Read 2:   102,550,568 bp
+Total written (filtered):     85,860,448 bp (41.9%)
+  Read 1:    43,009,926 bp
+  Read 2:    42,850,522 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 192642 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	93	6383.9	0	93
+4	7	1596.0	0	7
+5	6	399.0	0	6
+6	3	99.7	0	3
+7	3	24.9	0	3
+8	6	6.2	0	6
+9	3	1.6	0	3
+10	32	0.4	1	24 8
+11	1	0.1	1	1
+12	4	0.0	1	4
+13	41	0.0	1	38 3
+14	95	0.0	1	72 23
+15	27	0.0	1	12 15
+16	342	0.0	1	270 72
+17	238	0.0	1	184 54
+18	137	0.0	1	37 41 59
+19	1204	0.0	1	571 568 65
+20	190223	0.0	2	167133 15221 7869
+21	155	0.0	2	32 108 15
+22	9	0.0	2	0 1 8
+23	2	0.0	2	0 2
+24	1	0.0	2	0 0 1
+33	1	0.0	2	1
+84	1	0.0	2	1
+155	1	0.0	2	1
+170	1	0.0	2	1
+172	3	0.0	2	2 1
+202	1	0.0	2	1
+250	2	0.0	2	1 0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 385937 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	181179	6383.9	0	181179
+4	6605	1596.0	0	6605
+5	29	399.0	0	29
+6	1	99.7	0	1
+7	3	24.9	0	3
+9	1	1.6	0	1
+10	1	0.4	1	1
+11	5	0.1	1	5
+12	3	0.0	1	2 1
+14	3	0.0	1	2 1
+15	10	0.0	1	8 2
+16	95	0.0	1	20 75
+17	6837	0.0	1	3619 3218
+18	191084	0.0	1	184926 6158
+19	77	0.0	1	37 40
+30	1	0.0	1	1
+31	2	0.0	1	2
+217	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223625_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223625_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223625_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223625_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 9.78 s (25 us/read; 2.45 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            398,784
+  Read 1 with adapter:                 186,221 (46.7%)
+  Read 2 with adapter:                 193,505 (48.5%)
+Pairs that were too short:                   0 (0.0%)
+Pairs written (passing filters):       178,730 (44.8%)
+
+Total basepairs processed:   200,189,568 bp
+  Read 1:   100,094,784 bp
+  Read 2:   100,094,784 bp
+Total written (filtered):     82,432,296 bp (41.2%)
+  Read 1:    41,291,166 bp
+  Read 2:    41,141,130 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 186245 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	119	6231.0	0	119
+4	12	1557.8	0	12
+5	11	389.4	0	11
+7	1	24.3	0	1
+8	5	6.1	0	5
+9	2	1.5	0	2
+10	27	0.4	1	23 4
+11	1	0.1	1	0 1
+12	2	0.0	1	1 1
+13	36	0.0	1	32 4
+14	109	0.0	1	91 18
+15	37	0.0	1	16 21
+16	339	0.0	1	256 83
+17	225	0.0	1	154 71
+18	103	0.0	1	20 48 35
+19	1207	0.0	1	531 569 107
+20	183838	0.0	2	161310 14648 7880
+21	158	0.0	2	25 111 22
+22	7	0.0	2	0 0 7
+73	1	0.0	2	1
+83	2	0.0	2	1 0 1
+135	1	0.0	2	1
+155	1	0.0	2	1
+157	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 375487 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	177738	6231.0	0	177738
+4	4651	1557.8	0	4651
+5	37	389.4	0	37
+6	3	97.4	0	3
+7	1	24.3	0	1
+9	1	1.5	0	0 1
+11	3	0.1	1	3
+14	3	0.0	1	3
+15	9	0.0	1	7 2
+16	69	0.0	1	16 53
+17	6851	0.0	1	3206 3645
+18	186042	0.0	1	179471 6571
+19	76	0.0	1	28 48
+34	2	0.0	1	2
+187	1	0.0	1	0 1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223626_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223626_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223626_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223626_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 13.39 s (28 us/read; 2.14 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            476,854
+  Read 1 with adapter:                 225,494 (47.3%)
+  Read 2 with adapter:                 232,593 (48.8%)
+Pairs that were too short:                  21 (0.0%)
+Pairs written (passing filters):       218,427 (45.8%)
+
+Total basepairs processed:   239,380,708 bp
+  Read 1:   119,690,354 bp
+  Read 2:   119,690,354 bp
+Total written (filtered):    100,774,068 bp (42.1%)
+  Read 1:    50,461,237 bp
+  Read 2:    50,312,831 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 225505 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	83	7450.8	0	83
+4	8	1862.7	0	8
+5	9	465.7	0	9
+6	5	116.4	0	5
+7	7	29.1	0	7
+8	8	7.3	0	8
+9	7	1.8	0	7
+10	38	0.5	1	31 7
+11	1	0.1	1	0 1
+13	32	0.0	1	27 5
+14	83	0.0	1	73 10
+15	25	0.0	1	12 13
+16	271	0.0	1	231 40
+17	170	0.0	1	114 56
+18	150	0.0	1	48 47 55
+19	1149	0.0	1	427 631 91
+20	223271	0.0	2	196577 17486 9208
+21	179	0.0	2	36 125 18
+22	3	0.0	2	0 0 3
+23	1	0.0	2	0 0 1
+27	1	0.0	2	1
+29	1	0.0	2	1
+34	1	0.0	2	1
+73	1	0.0	2	1
+85	1	0.0	2	0 1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 438685 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	199270	7450.8	0	199270
+4	7172	1862.7	0	7172
+5	18	465.7	0	18
+6	2	116.4	0	2
+7	8	29.1	0	8
+8	1	7.3	0	1
+11	4	0.1	1	4
+13	1	0.0	1	0 1
+15	9	0.0	1	5 4
+16	94	0.0	1	21 73
+17	7816	0.0	1	3705 4111
+18	224129	0.0	1	217103 7026
+19	157	0.0	1	18 139
+28	1	0.0	1	0 1
+35	1	0.0	1	1
+144	1	0.0	1	1
+199	1	0.0	1	1
+This is cutadapt 2.8 with Python 3.7.6
+Command line parameters: -g CCAGCASCYGCGGTAATTCC -G ACTTTCGTTCTTGATYRA -n 2 --trim-n -o /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223627_1.fastq.gz -p /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223627_2.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223627_1.fastq.gz /projet/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/fastq/ERR4223627_2.fastq.gz --cores=0 --discard-untrimmed --minimum-length 50
+Processing reads on 48 cores in paired-end mode ...
+Finished in 13.71 s (29 us/read; 2.04 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:            465,412
+  Read 1 with adapter:                 216,443 (46.5%)
+  Read 2 with adapter:                 225,811 (48.5%)
+Pairs that were too short:                   1 (0.0%)
+Pairs written (passing filters):       208,409 (44.8%)
+
+Total basepairs processed:   233,636,824 bp
+  Read 1:   116,818,412 bp
+  Read 2:   116,818,412 bp
+Total written (filtered):     96,155,207 bp (41.2%)
+  Read 1:    48,146,389 bp
+  Read 2:    48,008,818 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: CCAGCASCYGCGGTAATTCC; Type: regular 5'; Length: 20; Trimmed: 216469 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20 bp: 2
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	139	7272.1	0	139
+4	7	1818.0	0	7
+5	8	454.5	0	8
+6	5	113.6	0	5
+7	4	28.4	0	4
+8	11	7.1	0	11
+9	1	1.8	0	1
+10	32	0.4	1	28 4
+11	2	0.1	1	0 2
+12	3	0.0	1	3
+13	34	0.0	1	31 3
+14	64	0.0	1	52 12
+15	30	0.0	1	13 17
+16	281	0.0	1	236 45
+17	154	0.0	1	94 60
+18	116	0.0	1	43 30 43
+19	1205	0.0	1	435 622 148
+20	214148	0.0	2	187770 17160 9218
+21	205	0.0	2	45 144 16
+22	8	0.0	2	0 0 8
+23	2	0.0	2	0 2
+32	3	0.0	2	3
+73	2	0.0	2	2
+81	1	0.0	2	1
+90	1	0.0	2	0 0 1
+186	2	0.0	2	2
+233	1	0.0	2	1
+
+
+=== Second read: Adapter 2 ===
+
+Sequence: ACTTTCGTTCTTGATYRA; Type: regular 5'; Length: 18; Trimmed: 425141 times; Reverse-complemented: 0 times
+
+No. of allowed errors:
+0-9 bp: 0; 10-18 bp: 1
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	194389	7272.1	0	194389
+4	5309	1818.0	0	5309
+5	26	454.5	0	26
+10	2	0.4	1	0 2
+11	6	0.1	1	4 2
+12	2	0.0	1	2
+15	7	0.0	1	3 4
+16	99	0.0	1	18 81
+17	7855	0.0	1	3378 4477
+18	217281	0.0	1	209932 7349
+19	158	0.0	1	13 145
+23	1	0.0	1	1
+26	1	0.0	1	1
+29	2	0.0	1	1 1
+31	1	0.0	1	1
+35	1	0.0	1	1
+36	1	0.0	1	1
+[1] "=== Number of reads in each file ==="
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223600_1.fastq.gz. 3.57%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223601_1.fastq.gz. 7.14%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223602_1.fastq.gz. 10.71%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223603_1.fastq.gz. 14.29%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223604_1.fastq.gz. 17.86%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223605_1.fastq.gz. 21.43%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223606_1.fastq.gz. 25%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223607_1.fastq.gz. 28.57%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223608_1.fastq.gz. 32.14%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223609_1.fastq.gz. 35.71%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223610_1.fastq.gz. 39.29%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223611_1.fastq.gz. 42.86%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223612_1.fastq.gz. 46.43%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223613_1.fastq.gz. 50%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223614_1.fastq.gz. 53.57%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223615_1.fastq.gz. 57.14%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223616_1.fastq.gz. 60.71%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223617_1.fastq.gz. 64.29%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223618_1.fastq.gz. 67.86%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223619_1.fastq.gz. 71.43%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223620_1.fastq.gz. 75%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223621_1.fastq.gz. 78.57%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223622_1.fastq.gz. 82.14%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223623_1.fastq.gz. 85.71%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223624_1.fastq.gz. 89.29%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223625_1.fastq.gz. 92.86%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223626_1.fastq.gz. 96.43%"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223627_1.fastq.gz. 100%"
+[1] "=== Plot quality ==="
+[1] "i = 1"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223600_1.fastq.gz - Read length min= 68 max= 248 mean= 231.021396125933"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223600_1.fastq.gz. "
+[1] "i = 2"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223601_1.fastq.gz - Read length min= 142 max= 248 mean= 231.02120208595"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223601_1.fastq.gz. "
+[1] "i = 3"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223602_1.fastq.gz - Read length min= 85 max= 248 mean= 231.020416168193"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223602_1.fastq.gz. "
+[1] "i = 4"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223603_1.fastq.gz - Read length min= 155 max= 248 mean= 231.020730843099"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223603_1.fastq.gz. "
+[1] "i = 5"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223604_1.fastq.gz - Read length min= 52 max= 248 mean= 231.012237962942"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223604_1.fastq.gz. "
+[1] "i = 6"
+[1] "File before filtration /scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223605_1.fastq.gz - Read length min= 59 max= 248 mean= 231.016083032491"
+[1] "Finished with file/scratch/umr7144/dipo/vaulot/metabarcodes/206_Tara_Polar_V4/cutadapt/ERR4223605_1.fastq.gz. "
+[1] "=== Filtering ==="
+                      reads.in reads.out
+ERR4223600_1.fastq.gz   191530    182244
+ERR4223601_1.fastq.gz   183897    183610
+ERR4223602_1.fastq.gz   203956    194218
+ERR4223603_1.fastq.gz   194734    194408
+ERR4223604_1.fastq.gz   174212    166175
+ERR4223605_1.fastq.gz   166200    165930
+ERR4223606_1.fastq.gz   173317    165166
+ERR4223607_1.fastq.gz   166822    166539
+ERR4223608_1.fastq.gz   243619    232134
+ERR4223609_1.fastq.gz   234060    233660
+ERR4223610_1.fastq.gz   194738    185405
+ERR4223611_1.fastq.gz   186219    185893
+ERR4223612_1.fastq.gz   161182    153620
+ERR4223613_1.fastq.gz   155930    155676
+ERR4223614_1.fastq.gz   208587    198347
+ERR4223615_1.fastq.gz   198760    198400
+ERR4223616_1.fastq.gz   205315    195432
+ERR4223617_1.fastq.gz   195375    195029
+ERR4223618_1.fastq.gz   183670    174894
+ERR4223619_1.fastq.gz   175956    175642
+ERR4223620_1.fastq.gz   202674    193000
+ERR4223621_1.fastq.gz   193876    193561
+ERR4223622_1.fastq.gz   187566    178667
+ERR4223623_1.fastq.gz   180180    179867
+ERR4223624_1.fastq.gz   186170    177114
+ERR4223625_1.fastq.gz   178730    178456
+ERR4223626_1.fastq.gz   218427    207565
+ERR4223627_1.fastq.gz   208409    208053
+[1] "=== Start Dada2 ==="
+[1] "=== Error computing ==="
+128816560 total bases in 560072 reads from 3 samples will be used for learning the error rates.
+117615120 total bases in 560072 reads from 3 samples will be used for learning the error rates.
+[1] "=== dereplicate big data sets ==="
+[1] "logical expression: -TRUE-TRUE-TRUE"
+Processing file # : 1 
+NULL
+Sample 1 - 182244 reads in 77870 unique sequences.
+Sample 1 - 182244 reads in 77416 unique sequences.
+Processing file # : 2 
+NULL
+Sample 1 - 183610 reads in 76536 unique sequences.
+Sample 1 - 183610 reads in 79702 unique sequences.
+Processing file # : 3 
+NULL
+Sample 1 - 194218 reads in 81916 unique sequences.
+Sample 1 - 194218 reads in 82211 unique sequences.
+Processing file # : 4 
+NULL
+Sample 1 - 194408 reads in 79738 unique sequences.
+Sample 1 - 194408 reads in 83963 unique sequences.
+Processing file # : 5 
+NULL
+Sample 1 - 166175 reads in 71183 unique sequences.
+Sample 1 - 166175 reads in 72697 unique sequences.
+Processing file # : 6 
+NULL
+Sample 1 - 165930 reads in 68818 unique sequences.
+Sample 1 - 165930 reads in 73811 unique sequences.
+Processing file # : 7 
+NULL
+Sample 1 - 165166 reads in 77071 unique sequences.
+Sample 1 - 165166 reads in 75674 unique sequences.
+Processing file # : 8 
+NULL
+Sample 1 - 166539 reads in 74562 unique sequences.
+Sample 1 - 166539 reads in 77059 unique sequences.
+Processing file # : 9 
+NULL
+Sample 1 - 232134 reads in 92756 unique sequences.
+Sample 1 - 232134 reads in 89824 unique sequences.
+Processing file # : 10 
+NULL
+Sample 1 - 233660 reads in 90476 unique sequences.
+Sample 1 - 233660 reads in 92056 unique sequences.
+Processing file # : 11 
+NULL
+Sample 1 - 185405 reads in 82800 unique sequences.
+Sample 1 - 185405 reads in 83986 unique sequences.
+Processing file # : 12 
+NULL
+Sample 1 - 185893 reads in 80653 unique sequences.
+Sample 1 - 185893 reads in 85314 unique sequences.
+Processing file # : 13 
+NULL
+Sample 1 - 153620 reads in 70917 unique sequences.
+Sample 1 - 153620 reads in 71067 unique sequences.
+Processing file # : 14 
+NULL
+Sample 1 - 155676 reads in 69365 unique sequences.
+Sample 1 - 155676 reads in 73013 unique sequences.
+Processing file # : 15 
+NULL
+Sample 1 - 198347 reads in 78753 unique sequences.
+Sample 1 - 198347 reads in 81040 unique sequences.
+Processing file # : 16 
+NULL
+Sample 1 - 198400 reads in 76532 unique sequences.
+Sample 1 - 198400 reads in 82647 unique sequences.
+Processing file # : 17 
+NULL
+Sample 1 - 195432 reads in 85957 unique sequences.
+Sample 1 - 195432 reads in 86467 unique sequences.
+Processing file # : 18 
+NULL
+Sample 1 - 195029 reads in 82780 unique sequences.
+Sample 1 - 195029 reads in 87396 unique sequences.
+Processing file # : 19 
+NULL
+Sample 1 - 174894 reads in 76178 unique sequences.
+Sample 1 - 174894 reads in 78383 unique sequences.
+Processing file # : 20 
+NULL
+Sample 1 - 175642 reads in 74395 unique sequences.
+Sample 1 - 175642 reads in 80231 unique sequences.
+Processing file # : 21 
+NULL
+Sample 1 - 193000 reads in 77570 unique sequences.
+Sample 1 - 193000 reads in 79349 unique sequences.
+Processing file # : 22 
+NULL
+Sample 1 - 193561 reads in 76172 unique sequences.
+Sample 1 - 193561 reads in 81479 unique sequences.
+Processing file # : 23 
+NULL
+Sample 1 - 178667 reads in 76361 unique sequences.
+Sample 1 - 178667 reads in 77231 unique sequences.
+Processing file # : 24 
+NULL
+Sample 1 - 179867 reads in 74650 unique sequences.
+Sample 1 - 179867 reads in 79494 unique sequences.
+Processing file # : 25 
+NULL
+Sample 1 - 177114 reads in 70661 unique sequences.
+Sample 1 - 177114 reads in 67214 unique sequences.
+Processing file # : 26 
+NULL
+Sample 1 - 178456 reads in 69393 unique sequences.
+Sample 1 - 178456 reads in 69327 unique sequences.
+Processing file # : 27 
+NULL
+Sample 1 - 207565 reads in 90247 unique sequences.
+Sample 1 - 207565 reads in 90892 unique sequences.
+Processing file # : 28 
+NULL
+Sample 1 - 208053 reads in 87952 unique sequences.
+Sample 1 - 208053 reads in 92198 unique sequences.
+
+ 230  233  234  237  238  241  242  250  253  254  255  261  262  263  266  268 
+   3    1    1    1    1    1    3    2    1    2    1    1    1    1    4    1 
+ 270  271  273  276  277  278  279  281  282  286  287  290  293  295  297  299 
+   2    1    1    3    1    1    1    1    1    1    2    1    1    2    1    2 
+ 301  305  309  310  311  312  318  322  323  324  325  326  328  332  333  334 
+   1   11    2    3    1    1    1    1    2    1    1    3    2    2    1    4 
+ 336  337  338  339  341  342  344  345  346  349  350  351  352  353  354  356 
+   2    5    1    1    1    1    1    3    1    2    4    4    4    5    2    2 
+ 357  358  359  360  361  362  363  364  365  366  367  368  369  370  371  372 
+   3    3    3    8   18   42   27   18   20   27   10    5   20  207  285  214 
+ 373  374  375  376  377  378  379  380  381  382  383  384  385  386  387  388 
+  99  117  219  185  500 2346  404  601  646  359  289  104   47   67   49   88 
+ 389  390  391  392  393  394  395  396  397  398  399  400  403  404  406  409 
+ 161   46   24    3    4    2    7   13    6    1    3    3    2    1    1    1 
+ 410  412  413  418  420  425 
+   2    1    1    1    2    1 
+[1] "Mean asv length : 377.19"
+[1] "=== Remove Chimera ==="
+[1] "=== Compile number of reads at each step ==="
+[1] "=== Assigning Taxonomy ==="
+Taxo slice =  1 
+NULL
+Finished processing reference fasta.Taxo slice =  2 
+NULL
+Finished processing reference fasta.Taxo slice =  3 
+NULL
+Finished processing reference fasta.

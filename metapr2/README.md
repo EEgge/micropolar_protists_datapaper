@@ -7,7 +7,12 @@
 
 ## Dada2 processing scripts
 Scripts are in directory `/scripts`
-The script is run on the Roscoff ABIMS server as follows where $DIR is the directory where scripts are and $DATASET_ID is the dataset ID (207, 208, 209)
+* `script_dada2.R`: main script
+* `param_dada2_206.R`: input parameter file for dataset 206
+* `script_dada2_206_2020-12-09.out`: output file for dataset 206 for processing done on 2020-12-09
+
+
+The script is run on the Roscoff ABIMS server as follows where $DIR is the directory where scripts are and $DATASET_ID is the dataset ID (207, 208, 209
 
 ```
 cd $DIR
@@ -16,7 +21,6 @@ source $CONDA3/activate cutadapt-2.8
 
 /opt/6.x/R-3.5.1/bin/Rscript --no-save --no-restore script_dada2.R -d $DATASET_ID > script_dada2_$1_$DATE.out
 ```
-
 
 ## Instructions to regenerate the data (no need to do a priori)
 * Do not change the structure of the directories because the R markdown script will not work

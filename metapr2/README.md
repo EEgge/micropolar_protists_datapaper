@@ -1,5 +1,23 @@
 # MetaPR2 files
 
+## Data sets
+* 207:	MicroPolar_Hiseq A
+* 208:	MicroPolar_Hiseq B
+* 209:	MicroPolar_Miseq
+
+## Dada2 processing scripts
+Scripts are in directory `/scripts`
+The script is run on the Roscoff ABIMS server as follows where $DIR is the directory where scripts are and $DATASET_ID is the dataset ID (207, 208, 209)
+
+```
+cd $DIR
+
+source $CONDA3/activate cutadapt-2.8
+
+/opt/6.x/R-3.5.1/bin/Rscript --no-save --no-restore script_dada2.R -d $DATASET_ID > script_dada2_$1_$DATE.out
+```
+
+
 ## Instructions to regenerate the data (no need to do a priori)
 * Do not change the structure of the directories because the R markdown script will not work
 * Launch the R project in the dada2 directory "metaPR2 micropolar.Rproj"

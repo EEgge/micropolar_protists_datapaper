@@ -47,9 +47,9 @@ source $CONDA3/activate cutadapt-2.8
     * **phyloseq_metapr2_asv_set_xxx_Eukaryota.rds**: phyloseq file for all samples and asvs
 
 ## Structure of the phyloseq object
-* otu_table()   OTU Table:         [ 7036 taxa and 196 samples ]  
-* sample_data() Sample Data:       [ 196 samples by 55 sample variables ]  
-* tax_table()   Taxonomy Table:    [ 7036 taxa by 8 taxonomic ranks ]  
+* otu_table()   OTU Table:         [ 7042 taxa and 198 samples ]  
+* sample_data() Sample Data:       [ 198 samples by 55 sample variables ]  
+* tax_table()   Taxonomy Table:    [ 7042 taxa by 8 taxonomic ranks ]  
 
 ## Sample variables
  [1] "sample_id"                   "file_name"                   "sample_name"                 "sample_code"                 "metadata_code"              

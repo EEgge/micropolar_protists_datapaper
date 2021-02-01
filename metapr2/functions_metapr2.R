@@ -232,6 +232,11 @@ metapr2_export_asv <- function(taxo_level = kingdom, taxo_name="Eukaryota",
                                   compress = FALSE, taxo_include = FALSE)
   }
   
+  
+  # Export asv file
+  if (export_fasta) export(asv_fasta, str_c(directory, "metapr2_asv_set_", dataset_id_char ,"_", taxo_name_label, ".xlsx"))
+  
+  
   # Export wide Excel file
   
   if (export_wide_xls){

@@ -30,6 +30,7 @@ library(vegan)
 #         asvtab_wtax$divisionlong[i] <- asvtab_wtax$division[i]
 #     }
 # }
+
 #### Read files ####
 ## ASV tables ##
 asvtab_merg_subsamp_readnum <- read_delim(here("data", "asvtab_merged_subsamp_wtax.txt"), delim = "\t")
@@ -41,6 +42,7 @@ meta_tab_sample_sf <- meta_tab_seq_event[!duplicated(meta_tab$sample_sizefract),
 
 ## Environmental data file ##
 env_data <- read_delim()
+
 
 source("panels/panel_ui_barplot_dp.R", local = TRUE)
 source("panels/panel_ui_rarefaction_dp.R", local = TRUE)

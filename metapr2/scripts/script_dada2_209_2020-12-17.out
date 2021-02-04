@@ -1,0 +1,433 @@
+# =================================
+# Swtiches to adjust the processing
+# =================================
+  remove_primers <- TRUE
+  do_cutadapt     <- FALSE
+  do_summary      <- TRUE
+  do_plot_quality <- TRUE
+  do_filtering <- TRUE # If TRUE and primers are present must also do_cutadapt = TRUE
+  do_dada2    <- TRUE
+  do_taxo <- TRUE
+  multithread <- TRUE
+  multithread_filter <- TRUE
+  bigdata <- TRUE
+  
+# =================================
+# Read the parameters 
+# =================================
+
+dataset_code <- "MicroPolar_MiSeq"
+dataset_id <- 209
+dataset_path <- "/shared/projects/metapr2/209_MicroPolar_MiSeq/" # Server
+
+pr2_file <- "/projet/umr7144/dipo/vaulot/metabarcodes/database/pr2_4.12.0/pr2_version_4.12.0_18S_dada2.fasta.gz"
+
+# -- File structure
+
+  paired_reads = TRUE
+  
+  file_identifier = ".fastq"  # String to identify the files to be processed.
+  R1_identifier = "_R1"
+  R2_identifier = "_R2"
+  file_name_separator = "_L001"
+# This the first character of the file name to consider to extract the sample name (usually = 1)
+  sample.names_first_character =  1
+
+
+# --  Other parameters
+# target
+  gene = "18S rRNA"
+  gene_region = "V4"
+  organelle = "nucleus"
+
+
+# primer sets (TAReuk454FWD1	CCAGCASCYGCGGTAATTCC	V4 18S Next.Rev	ACTTTCGTTCTTGATYRATGA) 
+
+  FWD = "CCAGCASCYGCGGTAATTCC"
+  REV = "ACTTTCGTTCTTGATYRATGA"
+
+  anchor = ""  # Put in front of primer to anchor primer at start of sequence
+  
+# parameters for filterAndTrim
+  sequencer = "Illumina"
+
+# parameters for filterAndTrim
+  truncLen = c(270,240) # This influences the number of ASVs and the percent of asv recovered (need to remove 20 and 21)
+  minLen = c(270,240)
+  truncQ = 2         
+  maxEE = c(10, 10) 
+  maxLen = 400  # This is for 454 to remove long and bad reads
+
+# Reduce the number of asvs for problematic cases
+  max_number_asvs = 0
+
+# parameters for removeBimeraDenovo
+  method_chimera = "pooled"
+
+R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS release 6.8 (Final)Red Hat Enterprise Linux Server release 6.5 (Santiago)
+
+Matrix products: default
+BLAS: /opt/6.x/R-3.5.1/lib64/R/lib/libRblas.so
+LAPACK: /opt/6.x/R-3.5.1/lib64/R/lib/libRlapack.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] optparse_1.6.6              purrr_0.3.4                
+ [3] readr_1.3.1                 tibble_3.0.0               
+ [5] tidyr_1.1.0                 dplyr_1.0.0                
+ [7] ggplot2_3.3.0               stringr_1.4.0              
+ [9] ShortRead_1.40.0            GenomicAlignments_1.18.1   
+[11] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
+[13] matrixStats_0.56.0          Biobase_2.42.0             
+[15] Rsamtools_1.34.1            GenomicRanges_1.34.0       
+[17] GenomeInfoDb_1.18.2         BiocParallel_1.16.6        
+[19] Biostrings_2.50.2           XVector_0.22.0             
+[21] IRanges_2.16.0              S4Vectors_0.20.1           
+[23] BiocGenerics_0.28.0         dada2_1.14.0               
+[25] Rcpp_1.0.4.6               
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.1.0       reshape2_1.4.3         lattice_0.20-40       
+ [4] colorspace_1.4-1       vctrs_0.3.0            generics_0.0.2        
+ [7] getopt_1.20.3          rlang_0.4.6            pillar_1.4.3          
+[10] glue_1.4.1             withr_2.2.0            RColorBrewer_1.1-2    
+[13] GenomeInfoDbData_1.2.0 lifecycle_0.2.0        plyr_1.8.6            
+[16] zlibbioc_1.28.0        munsell_0.5.0          gtable_0.3.0          
+[19] hwriter_1.3.2          latticeExtra_0.6-28    fansi_0.4.1           
+[22] scales_1.1.1           RcppParallel_5.0.0     hms_0.5.3             
+[25] stringi_1.4.6          grid_3.5.1             cli_2.0.2             
+[28] tools_3.5.1            bitops_1.0-6           magrittr_1.5          
+[31] RCurl_1.98-1.2         crayon_1.3.4           pkgconfig_2.0.3       
+[34] ellipsis_0.3.1         Matrix_1.2-18          assertthat_0.2.1      
+[37] R6_2.4.1               compiler_3.5.1        
+ [1] "27_MP1_15_euk_S27"     "28_MP1_47_euk_S28"     "29_MP1_3_euk_S29"     
+ [4] "30_MP1_51_euk_S30"     "31_MP1_59_euk_S31"     "32_MP1_31_euk_S32"    
+ [7] "33_MP2_4_euk_S33"      "34_MP2_17_euk_S34"     "35_MP3_NP_7_euk_S35"  
+[10] "36_MP3_NP_55_euk_S36"  "37_MP3_NP_87_euk_S37"  "38_MP3_NP_63_euk_S38" 
+[13] "39_MP3_NP_118_euk_S39" "40_MP3_NP_114_euk_S40" "41_MP3_NP_111_euk_S41"
+[16] "42_MP3_NP_107_euk_S42" "43_MP3_NP_99_euk_S43"  "44_MP4_MI_3_euk_S44"  
+[19] "45_MP4_MI_16_euk_S45"  "46_MP4_NP_30_euk_S46"  "47_MP4_NP_34_euk_S47" 
+[22] "48_MP4_NP_38_euk_S48"  "49_MP4_MI_48_euk_S49"  "50_MP4_MI_52_euk_S50" 
+[25] "51_MP4_MI_66_euk_S51"  "52_MP4_NP_66_euk_S52"  "53_MP4_NP_86_euk_S53" 
+[28] "54_MP4_NP_74_euk_S54"  "55_MP5_MI_11_euk_S55"  "56_MP5_MI_29_euk_S56" 
+[31] "57_MP5_NP_35_euk_S57"  "58_MP5_MI_18_euk_S58"  "67_MP5_NP_59_euk_S67" 
+[34] "68_MP5_MI_36_euk_S68" 
+[1] "Finished with file: 1 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/27_MP1_15_euk_S27_L001_R1_001.fastq.gz 79466 sequences"
+[1] "Finished with file: 2 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/28_MP1_47_euk_S28_L001_R1_001.fastq.gz 111151 sequences"
+[1] "Finished with file: 3 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/29_MP1_3_euk_S29_L001_R1_001.fastq.gz 96648 sequences"
+[1] "Finished with file: 4 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/30_MP1_51_euk_S30_L001_R1_001.fastq.gz 62796 sequences"
+[1] "Finished with file: 5 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/31_MP1_59_euk_S31_L001_R1_001.fastq.gz 105810 sequences"
+[1] "Finished with file: 6 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/32_MP1_31_euk_S32_L001_R1_001.fastq.gz 104851 sequences"
+[1] "Finished with file: 7 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/33_MP2_4_euk_S33_L001_R1_001.fastq.gz 101348 sequences"
+[1] "Finished with file: 8 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/34_MP2_17_euk_S34_L001_R1_001.fastq.gz 107302 sequences"
+[1] "Finished with file: 9 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/35_MP3_NP_7_euk_S35_L001_R1_001.fastq.gz 91378 sequences"
+[1] "Finished with file: 10 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/36_MP3_NP_55_euk_S36_L001_R1_001.fastq.gz 143617 sequences"
+[1] "Finished with file: 11 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/37_MP3_NP_87_euk_S37_L001_R1_001.fastq.gz 120647 sequences"
+[1] "Finished with file: 12 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/38_MP3_NP_63_euk_S38_L001_R1_001.fastq.gz 51594 sequences"
+[1] "Finished with file: 13 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/39_MP3_NP_118_euk_S39_L001_R1_001.fastq.gz 152088 sequences"
+[1] "Finished with file: 14 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/40_MP3_NP_114_euk_S40_L001_R1_001.fastq.gz 97215 sequences"
+[1] "Finished with file: 15 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/41_MP3_NP_111_euk_S41_L001_R1_001.fastq.gz 114255 sequences"
+[1] "Finished with file: 16 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/42_MP3_NP_107_euk_S42_L001_R1_001.fastq.gz 83865 sequences"
+[1] "Finished with file: 17 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/43_MP3_NP_99_euk_S43_L001_R1_001.fastq.gz 106727 sequences"
+[1] "Finished with file: 18 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/44_MP4_MI_3_euk_S44_L001_R1_001.fastq.gz 115447 sequences"
+[1] "Finished with file: 19 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/45_MP4_MI_16_euk_S45_L001_R1_001.fastq.gz 104839 sequences"
+[1] "Finished with file: 20 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/46_MP4_NP_30_euk_S46_L001_R1_001.fastq.gz 58281 sequences"
+[1] "Finished with file: 21 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/47_MP4_NP_34_euk_S47_L001_R1_001.fastq.gz 101582 sequences"
+[1] "Finished with file: 22 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/48_MP4_NP_38_euk_S48_L001_R1_001.fastq.gz 131930 sequences"
+[1] "Finished with file: 23 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/49_MP4_MI_48_euk_S49_L001_R1_001.fastq.gz 82546 sequences"
+[1] "Finished with file: 24 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/50_MP4_MI_52_euk_S50_L001_R1_001.fastq.gz 119293 sequences"
+[1] "Finished with file: 25 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/51_MP4_MI_66_euk_S51_L001_R1_001.fastq.gz 80855 sequences"
+[1] "Finished with file: 26 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/52_MP4_NP_66_euk_S52_L001_R1_001.fastq.gz 64873 sequences"
+[1] "Finished with file: 27 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/53_MP4_NP_86_euk_S53_L001_R1_001.fastq.gz 86212 sequences"
+[1] "Finished with file: 28 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/54_MP4_NP_74_euk_S54_L001_R1_001.fastq.gz 54835 sequences"
+[1] "Finished with file: 29 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/55_MP5_MI_11_euk_S55_L001_R1_001.fastq.gz 82731 sequences"
+[1] "Finished with file: 30 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/56_MP5_MI_29_euk_S56_L001_R1_001.fastq.gz 74429 sequences"
+[1] "Finished with file: 31 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/57_MP5_NP_35_euk_S57_L001_R1_001.fastq.gz 101657 sequences"
+[1] "Finished with file: 32 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/58_MP5_MI_18_euk_S58_L001_R1_001.fastq.gz 124496 sequences"
+[1] "Finished with file: 33 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/67_MP5_NP_59_euk_S67_L001_R1_001.fastq.gz 109410 sequences"
+[1] "Finished with file: 34 /shared/projects/metapr2/209_MicroPolar_MiSeq/fastq/68_MP5_MI_36_euk_S68_L001_R1_001.fastq.gz 120115 sequences"
+                 Forward Complement Reverse RevComp
+FWD.ForwardReads   76696          0       0       0
+FWD.ReverseReads       0          0       0       6
+REV.ForwardReads       0          0       0       4
+REV.ReverseReads   75107          0       0       0
+2.8
+[1] "=== Number of reads in each file ==="
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/27_MP1_15_euk_S27_L001_R1_001.fastq.gz. 2.94%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/28_MP1_47_euk_S28_L001_R1_001.fastq.gz. 5.88%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/29_MP1_3_euk_S29_L001_R1_001.fastq.gz. 8.82%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/30_MP1_51_euk_S30_L001_R1_001.fastq.gz. 11.76%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/31_MP1_59_euk_S31_L001_R1_001.fastq.gz. 14.71%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/32_MP1_31_euk_S32_L001_R1_001.fastq.gz. 17.65%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/33_MP2_4_euk_S33_L001_R1_001.fastq.gz. 20.59%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/34_MP2_17_euk_S34_L001_R1_001.fastq.gz. 23.53%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/35_MP3_NP_7_euk_S35_L001_R1_001.fastq.gz. 26.47%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/36_MP3_NP_55_euk_S36_L001_R1_001.fastq.gz. 29.41%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/37_MP3_NP_87_euk_S37_L001_R1_001.fastq.gz. 32.35%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/38_MP3_NP_63_euk_S38_L001_R1_001.fastq.gz. 35.29%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/39_MP3_NP_118_euk_S39_L001_R1_001.fastq.gz. 38.24%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/40_MP3_NP_114_euk_S40_L001_R1_001.fastq.gz. 41.18%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/41_MP3_NP_111_euk_S41_L001_R1_001.fastq.gz. 44.12%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/42_MP3_NP_107_euk_S42_L001_R1_001.fastq.gz. 47.06%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/43_MP3_NP_99_euk_S43_L001_R1_001.fastq.gz. 50%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/44_MP4_MI_3_euk_S44_L001_R1_001.fastq.gz. 52.94%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/45_MP4_MI_16_euk_S45_L001_R1_001.fastq.gz. 55.88%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/46_MP4_NP_30_euk_S46_L001_R1_001.fastq.gz. 58.82%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/47_MP4_NP_34_euk_S47_L001_R1_001.fastq.gz. 61.76%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/48_MP4_NP_38_euk_S48_L001_R1_001.fastq.gz. 64.71%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/49_MP4_MI_48_euk_S49_L001_R1_001.fastq.gz. 67.65%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/50_MP4_MI_52_euk_S50_L001_R1_001.fastq.gz. 70.59%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/51_MP4_MI_66_euk_S51_L001_R1_001.fastq.gz. 73.53%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/52_MP4_NP_66_euk_S52_L001_R1_001.fastq.gz. 76.47%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/53_MP4_NP_86_euk_S53_L001_R1_001.fastq.gz. 79.41%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/54_MP4_NP_74_euk_S54_L001_R1_001.fastq.gz. 82.35%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/55_MP5_MI_11_euk_S55_L001_R1_001.fastq.gz. 85.29%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/56_MP5_MI_29_euk_S56_L001_R1_001.fastq.gz. 88.24%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/57_MP5_NP_35_euk_S57_L001_R1_001.fastq.gz. 91.18%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/58_MP5_MI_18_euk_S58_L001_R1_001.fastq.gz. 94.12%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/67_MP5_NP_59_euk_S67_L001_R1_001.fastq.gz. 97.06%"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/68_MP5_MI_36_euk_S68_L001_R1_001.fastq.gz. 100%"
+[1] "=== Plot quality ==="
+[1] "i = 1"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/27_MP1_15_euk_S27_L001_R1_001.fastq.gz - Read length min= 252 max= 298 mean= 281.017730947176"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/27_MP1_15_euk_S27_L001_R1_001.fastq.gz. "
+[1] "i = 2"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/28_MP1_47_euk_S28_L001_R1_001.fastq.gz - Read length min= 254 max= 298 mean= 281.02285188626"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/28_MP1_47_euk_S28_L001_R1_001.fastq.gz. "
+[1] "i = 3"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/29_MP1_3_euk_S29_L001_R1_001.fastq.gz - Read length min= 236 max= 298 mean= 281.01888634598"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/29_MP1_3_euk_S29_L001_R1_001.fastq.gz. "
+[1] "i = 4"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/30_MP1_51_euk_S30_L001_R1_001.fastq.gz - Read length min= 266 max= 290 mean= 281.014465469524"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/30_MP1_51_euk_S30_L001_R1_001.fastq.gz. "
+[1] "i = 5"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/31_MP1_59_euk_S31_L001_R1_001.fastq.gz - Read length min= 237 max= 298 mean= 281.021100838488"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/31_MP1_59_euk_S31_L001_R1_001.fastq.gz. "
+[1] "i = 6"
+[1] "File before filtration /shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/32_MP1_31_euk_S32_L001_R1_001.fastq.gz - Read length min= 238 max= 298 mean= 281.015672982212"
+[1] "Finished with file/shared/projects/metapr2/209_MicroPolar_MiSeq/cutadapt/32_MP1_31_euk_S32_L001_R1_001.fastq.gz. "
+[1] "=== Filtering ==="
+                                           reads.in reads.out
+27_MP1_15_euk_S27_L001_R1_001.fastq.gz        78676     78244
+28_MP1_47_euk_S28_L001_R1_001.fastq.gz       109794    109151
+29_MP1_3_euk_S29_L001_R1_001.fastq.gz         95254     94838
+30_MP1_51_euk_S30_L001_R1_001.fastq.gz        62148     61897
+31_MP1_59_euk_S31_L001_R1_001.fastq.gz       104593    104075
+32_MP1_31_euk_S32_L001_R1_001.fastq.gz       103554    103042
+33_MP2_4_euk_S33_L001_R1_001.fastq.gz        100364     99935
+34_MP2_17_euk_S34_L001_R1_001.fastq.gz       105820    105058
+35_MP3_NP_7_euk_S35_L001_R1_001.fastq.gz      90009     89342
+36_MP3_NP_55_euk_S36_L001_R1_001.fastq.gz    140794    139705
+37_MP3_NP_87_euk_S37_L001_R1_001.fastq.gz    118346    117539
+38_MP3_NP_63_euk_S38_L001_R1_001.fastq.gz     50893     50646
+39_MP3_NP_118_euk_S39_L001_R1_001.fastq.gz   147817    146726
+40_MP3_NP_114_euk_S40_L001_R1_001.fastq.gz    95983     95168
+41_MP3_NP_111_euk_S41_L001_R1_001.fastq.gz   112539    111985
+42_MP3_NP_107_euk_S42_L001_R1_001.fastq.gz    82398     81571
+43_MP3_NP_99_euk_S43_L001_R1_001.fastq.gz    104525    103803
+44_MP4_MI_3_euk_S44_L001_R1_001.fastq.gz     113714    112458
+45_MP4_MI_16_euk_S45_L001_R1_001.fastq.gz    103654    102766
+46_MP4_NP_30_euk_S46_L001_R1_001.fastq.gz     57633     57261
+47_MP4_NP_34_euk_S47_L001_R1_001.fastq.gz    100353     99751
+48_MP4_NP_38_euk_S48_L001_R1_001.fastq.gz    130279    129286
+49_MP4_MI_48_euk_S49_L001_R1_001.fastq.gz     81697     81304
+50_MP4_MI_52_euk_S50_L001_R1_001.fastq.gz    117373    115788
+51_MP4_MI_66_euk_S51_L001_R1_001.fastq.gz     79971     79522
+52_MP4_NP_66_euk_S52_L001_R1_001.fastq.gz     63775     63234
+53_MP4_NP_86_euk_S53_L001_R1_001.fastq.gz     84811     84412
+54_MP4_NP_74_euk_S54_L001_R1_001.fastq.gz     54120     53835
+55_MP5_MI_11_euk_S55_L001_R1_001.fastq.gz     81696     80925
+56_MP5_MI_29_euk_S56_L001_R1_001.fastq.gz     73534     72700
+57_MP5_NP_35_euk_S57_L001_R1_001.fastq.gz    100246     99628
+58_MP5_MI_18_euk_S58_L001_R1_001.fastq.gz    122388    121303
+67_MP5_NP_59_euk_S67_L001_R1_001.fastq.gz    107097    106566
+68_MP5_MI_36_euk_S68_L001_R1_001.fastq.gz    118223    117457
+[1] "=== Start Dada2 ==="
+[1] "=== Error computing ==="
+121015350 total bases in 448205 reads from 5 samples will be used for learning the error rates.
+107569200 total bases in 448205 reads from 5 samples will be used for learning the error rates.
+[1] "=== dereplicate big data sets ==="
+[1] "logical expression: -TRUE-TRUE-TRUE"
+Processing file # : 1 
+NULL
+Sample 1 - 78244 reads in 28839 unique sequences.
+Sample 1 - 78244 reads in 23987 unique sequences.
+Processing file # : 2 
+NULL
+Sample 1 - 109151 reads in 38371 unique sequences.
+Sample 1 - 109151 reads in 30658 unique sequences.
+Processing file # : 3 
+NULL
+Sample 1 - 94838 reads in 32801 unique sequences.
+Sample 1 - 94838 reads in 27786 unique sequences.
+Processing file # : 4 
+NULL
+Sample 1 - 61897 reads in 28732 unique sequences.
+Sample 1 - 61897 reads in 25364 unique sequences.
+Processing file # : 5 
+NULL
+Sample 1 - 104075 reads in 43034 unique sequences.
+Sample 1 - 104075 reads in 37214 unique sequences.
+Processing file # : 6 
+NULL
+Sample 1 - 103042 reads in 32619 unique sequences.
+Sample 1 - 103042 reads in 28629 unique sequences.
+Processing file # : 7 
+NULL
+Sample 1 - 99935 reads in 36610 unique sequences.
+Sample 1 - 99935 reads in 31373 unique sequences.
+Processing file # : 8 
+NULL
+Sample 1 - 105058 reads in 38087 unique sequences.
+Sample 1 - 105058 reads in 29249 unique sequences.
+Processing file # : 9 
+NULL
+Sample 1 - 89342 reads in 28239 unique sequences.
+Sample 1 - 89342 reads in 27319 unique sequences.
+Processing file # : 10 
+NULL
+Sample 1 - 139705 reads in 45752 unique sequences.
+Sample 1 - 139705 reads in 40460 unique sequences.
+Processing file # : 11 
+NULL
+Sample 1 - 117539 reads in 37112 unique sequences.
+Sample 1 - 117539 reads in 32669 unique sequences.
+Processing file # : 12 
+NULL
+Sample 1 - 50646 reads in 19831 unique sequences.
+Sample 1 - 50646 reads in 19109 unique sequences.
+Processing file # : 13 
+NULL
+Sample 1 - 146726 reads in 43538 unique sequences.
+Sample 1 - 146726 reads in 41788 unique sequences.
+Processing file # : 14 
+NULL
+Sample 1 - 95168 reads in 31240 unique sequences.
+Sample 1 - 95168 reads in 27090 unique sequences.
+Processing file # : 15 
+NULL
+Sample 1 - 111985 reads in 39557 unique sequences.
+Sample 1 - 111985 reads in 37249 unique sequences.
+Processing file # : 16 
+NULL
+Sample 1 - 81571 reads in 34980 unique sequences.
+Sample 1 - 81571 reads in 28260 unique sequences.
+Processing file # : 17 
+NULL
+Sample 1 - 103803 reads in 42253 unique sequences.
+Sample 1 - 103803 reads in 38786 unique sequences.
+Processing file # : 18 
+NULL
+Sample 1 - 112458 reads in 25397 unique sequences.
+Sample 1 - 112458 reads in 24780 unique sequences.
+Processing file # : 19 
+NULL
+Sample 1 - 102766 reads in 25569 unique sequences.
+Sample 1 - 102766 reads in 22298 unique sequences.
+Processing file # : 20 
+NULL
+Sample 1 - 57261 reads in 24170 unique sequences.
+Sample 1 - 57261 reads in 20973 unique sequences.
+Processing file # : 21 
+NULL
+Sample 1 - 99751 reads in 36121 unique sequences.
+Sample 1 - 99751 reads in 30161 unique sequences.
+Processing file # : 22 
+NULL
+Sample 1 - 129286 reads in 45306 unique sequences.
+Sample 1 - 129286 reads in 38583 unique sequences.
+Processing file # : 23 
+NULL
+Sample 1 - 81304 reads in 28328 unique sequences.
+Sample 1 - 81304 reads in 22909 unique sequences.
+Processing file # : 24 
+NULL
+Sample 1 - 115788 reads in 31181 unique sequences.
+Sample 1 - 115788 reads in 25420 unique sequences.
+Processing file # : 25 
+NULL
+Sample 1 - 79522 reads in 28194 unique sequences.
+Sample 1 - 79522 reads in 25627 unique sequences.
+Processing file # : 26 
+NULL
+Sample 1 - 63234 reads in 26533 unique sequences.
+Sample 1 - 63234 reads in 23206 unique sequences.
+Processing file # : 27 
+NULL
+Sample 1 - 84412 reads in 32432 unique sequences.
+Sample 1 - 84412 reads in 30535 unique sequences.
+Processing file # : 28 
+NULL
+Sample 1 - 53835 reads in 22323 unique sequences.
+Sample 1 - 53835 reads in 21370 unique sequences.
+Processing file # : 29 
+NULL
+Sample 1 - 80925 reads in 17276 unique sequences.
+Sample 1 - 80925 reads in 18668 unique sequences.
+Processing file # : 30 
+NULL
+Sample 1 - 72700 reads in 15913 unique sequences.
+Sample 1 - 72700 reads in 16853 unique sequences.
+Processing file # : 31 
+NULL
+Sample 1 - 99628 reads in 38511 unique sequences.
+Sample 1 - 99628 reads in 35972 unique sequences.
+Processing file # : 32 
+NULL
+Sample 1 - 121303 reads in 42856 unique sequences.
+Sample 1 - 121303 reads in 37296 unique sequences.
+Processing file # : 33 
+NULL
+Sample 1 - 106566 reads in 42501 unique sequences.
+Sample 1 - 106566 reads in 38322 unique sequences.
+Processing file # : 34 
+NULL
+Sample 1 - 117457 reads in 42577 unique sequences.
+Sample 1 - 117457 reads in 35976 unique sequences.
+
+ 270  271  274  279  280  281  283  284  286  287  288  289  291  292  293  294 
+   6    4    2    2    1    1    1    1    1    1    1    4    1    3    1    2 
+ 296  297  298  300  301  302  303  305  307  308  310  312  313  315  316  317 
+   3    2    1    2    3    7    3    4    5    1    3    2    1    1    4    3 
+ 318  319  320  321  323  324  325  326  327  328  329  330  331  332  333  334 
+  16    7    5    2    1    2    2    1    1    1    4    2    1    1    1    3 
+ 335  336  337  338  339  340  341  343  344  345  347  348  349  350  351  352 
+   3    2    3   10    2    2    4    1    1    5    7    4    5    3    4    2 
+ 353  354  355  356  357  358  359  360  361  362  363  364  365  366  367  368 
+   3    2    6    2    3    4    7   17   23    6    9   20   20   52   12   29 
+ 369  370  371  372  373  374  375  376  377  378  379  380  381  382  383  384 
+  43   53  150   47   68   34  113  150  602 1721  352  183  167  114  131   55 
+ 385  386  387  388  389  390  391  392  393  394  395  396  397  399  400  402 
+  56   37   15   17    4   11    6    2    3    2    1    4    2    1    3    3 
+ 403  404  405  406  407  408  409  412  414  415  417  419  422  423  425  426 
+   1    1    5    2    1    1    2    2    1    2    3    1    1    1    1    1 
+ 427  428  431  433  435  437  438  441  443  445  451  454  457  462  471  472 
+   1    1    1    1    2    1    1    1    1    2    9    2    5    1    2    5 
+ 473  477  478  480  482  484  487  489  491  494  495 
+   4    2    2    1    1    1    1    1    1    1    3 
+[1] "Mean asv length : 376.20"
+[1] "=== Remove Chimera ==="
+[1] "=== Compile number of reads at each step ==="
+[1] "=== Assigning Taxonomy ==="
+Taxo slice =  1 
+NULL
+Finished processing reference fasta.Taxo slice =  2 
+NULL
+Finished processing reference fasta.Taxo slice =  3 
+NULL
+Finished processing reference fasta.Taxo slice =  4 
+NULL
+Finished processing reference fasta.

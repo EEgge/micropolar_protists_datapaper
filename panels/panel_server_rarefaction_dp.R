@@ -67,18 +67,18 @@ rareplotly <- ggplotly(rareplot, tooltip = "text")
 }
 
 
-rarslopes <- c(NULL)
-for (i in 1:dim(asvtab_num)[2]) {
-  rarslopes[i] <- rareslope(t(asvtab_num[,i]), sample=sum(asvtab_num[,i])-1)  
-}
-names(rarslopes) <- names(asvtab_num)
-
-min(rarslopes)
-
-nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab6_merged_subsamp_pa), "nasvs" = colSums(asvtab6_merged_subsamp_pa))
-slope_sample_sizefract <- tibble("sample_sizefract" = names(rarslopes), "slope" = rarslopes)
-
-nasvs_slope <- left_join(nasvs_sample_sizefract, slope_sample_sizefract, by = "sample_sizefract")
+# rarslopes <- c(NULL)
+# for (i in 1:dim(asvtab_num)[2]) {
+#   rarslopes[i] <- rareslope(t(asvtab_num[,i]), sample=sum(asvtab_num[,i])-1)  
+# }
+# names(rarslopes) <- names(asvtab_num)
+# 
+# min(rarslopes)
+# 
+# nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab6_merged_subsamp_pa), "nasvs" = colSums(asvtab6_merged_subsamp_pa))
+# slope_sample_sizefract <- tibble("sample_sizefract" = names(rarslopes), "slope" = rarslopes)
+# 
+# nasvs_slope <- left_join(nasvs_sample_sizefract, slope_sample_sizefract, by = "sample_sizefract")
 
   return(list(rareplotly = rareplotly))   
 })

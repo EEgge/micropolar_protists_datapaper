@@ -185,7 +185,7 @@ barplots_asv <- eventReactive(input$actionb_barplot_asv, {
     
     p12 <- ggplot(taxlevel_pivot_wmeta2_jan_mar, aes(x=reorder(station_dep_com, desc(station_dep_com)), y=value, fill = Taxonomic_group, 
                                                      text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_dep_com, percentornum, roundfun(value))))+
-      labs(title = "Proportional read abundance")+
+      labs(title = "Number or proportion of ASVs")+
       geom_bar(stat = "identity", position = "stack")+
       #scale_fill_manual(values = bpcolvec)+
       facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+

@@ -8,7 +8,7 @@ rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
   if (input$which_asvtab == "separate") {
     asvtab_start <- asvtab1_nonmerged_readnum 
   } else {
-    asvtab_start <- asvtab3_merged_subsamp_readnum
+    asvtab_start <- asvtab4_merged_subsamp_readnum
   }
   
   
@@ -75,7 +75,7 @@ names(rarslopes) <- names(asvtab_num)
 
 min(rarslopes)
 
-nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab_subsamp_num_prop_pa), "nasvs" = colSums(asvtab_subsamp_num_prop_pa))
+nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab6_merged_subsamp_pa), "nasvs" = colSums(asvtab6_merged_subsamp_pa))
 slope_sample_sizefract <- tibble("sample_sizefract" = names(rarslopes), "slope" = rarslopes)
 
 nasvs_slope <- left_join(nasvs_sample_sizefract, slope_sample_sizefract, by = "sample_sizefract")

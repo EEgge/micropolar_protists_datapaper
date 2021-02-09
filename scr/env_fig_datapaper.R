@@ -1,5 +1,5 @@
 dt <- tibble("month" = c(rep("Jan",4), rep("Mar",4)), "st" =c("s1", "s1", "s2","s2","s3","s3","s4","s4"), "depth" = c(1,9,1,10,1,12,1,11), nut = c(0.1,0.2,0.5,.6, .4, .5, .2, .1))
-meta_table <- read.table(here("data", "meta_cleanMP.txt"), header = T, sep = "\t", fill = NA)
+env_table <- read.table(here("data", "meta_cleanMP.txt"), header = T, sep = "\t", fill = NA)
 profiletab <- read.table(here("data", "MP_CB_profiles_20200206.txt"), header = T, sep = "\t", fill = NA, na.strings = c("", " ", "NA"))
 head(profiletab)
 

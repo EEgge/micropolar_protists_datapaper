@@ -8,7 +8,7 @@ rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
   if (input$which_asvtab == "separate") {
     asvtab_start <- asvtab1_nonmerged_readnum 
   } else {
-    asvtab_start <- asvtab3_merged_subsamp_readnum
+    asvtab_start <- asvtab4_merged_subsamp_readnum
   }
   
   

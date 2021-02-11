@@ -30,12 +30,15 @@ meta_tab_sample_sf <- meta_tab_seq_event[!duplicated(meta_tab$sample_sizefract),
 env_tab <- read_delim(here("data", "meta_cleanMP.txt"), delim = "\t")
 
 # asv tables #
-asvtab_wtax <- read_excel(here("metapr2/export", "metapr2_wide_asv_set_207_208_209_Eukaryota_nodups.xlsx"))
-asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab_subsamp_prop_tax.txt"), delim = "\t") #Metazoa and Embryophyceae removed, seq_event replicate sample_sf merged, subsampled to equal read number within each size fraction.
+asvtab_wtax <- read_excel(here("metapr2/export", "metapr2_wide_asv_set_207_208_209_Eukaryota.xlsx"))
+asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab_subsamp_prop_wtax.txt"), delim = "\t") #Metazoa and Embryophyceae removed, seq_event replicate sample_sf merged, subsampled to equal read number within each size fraction.
 
-taxlevels <- names(asvtab_wtax)[1:10]
+taxlevels <- c("asv_code", "kingdom", "supergroup", "division", "divisionlong", "class", "family", "order", "genus", "species", "sequence")
 
 n_occur <- data.frame(table(asvtab_wtax$asv_code))
+n_occur %>% filter(Freq > 1)
+asvtab_wtax %>% filter(asv_code == "41a8ef8f8066c541e9cd9d3df7734166370a68fa") %>% purrr::keep(is.numeric) %>% sum()
+
 
 asvtab_wtax <- asvtab_wtax %>% add_column(divisionlong = NA)
 for (i in 1:dim(asvtab_wtax)[1]) {
@@ -58,13 +61,13 @@ asvtab_num_prop <- sweep(asvtab_num, 2 , colSums(asvtab_num), FUN = "/")
 
 colSums(asvtab_num)
 asvtab_prop_tax <- cbind.data.frame(asvtab_notnum, asvtab_num_prop)
-write_delim(asvtab_prop_tax, "data/asvtab_nonmerged_prop_wtax.txt", delim = "\t")
+#write_delim(asvtab_prop_tax, "data/asvtab_nonmerged_prop_wtax.txt", delim = "\t")
 
 
 
 
 
-asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab_subsamp_prop_tax.txt"), delim = "\t")
+asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab4_merged_subsamp_prop.txt"), delim = "\t")
 dim(asvtab_subsamp_prop_tax) #6536 x 166 
 
 #### Create presence-absence after subsampling asv table ####
@@ -73,13 +76,14 @@ asvtab_subsamp_num_prop <- asvtab_subsamp_prop_tax %>% select_if(is.numeric)
 asvtab_subsamp_num_prop_pa <- asvtab_subsamp_num_prop
 asvtab_subsamp_num_prop_pa[asvtab_subsamp_num_prop_pa >0] <- 1
 asvtab_subsamp_pa_tax <- bind_cols(asvtab_subsamp_notnum, asvtab_subsamp_num_prop_pa)
+write_delim(asvtab_subsamp_pa_tax, "data\asvtab5_merged_subsamp_pa.txt", delim = "\t")
 
 #Num ASVs after subsampling : 
 length(which(rowSums(asvtab_subsamp_num_prop_pa) == 0))
 
 # pivot and add meta data to presence-absence #
 asvtab_pa_longer <- pivot_longer(asvtab_subsamp_pa_tax, cols =!all_of(taxlevels),  names_to = "sample_sizefract")
-asvtab_pa_longer_meta <- left_join(asvtab_pa_longer, meta_tab_nodups, by = "sample_sizefract")
+asvtab_pa_longer_meta <- left_join(asvtab_pa_longer, meta_tab_sample_sf, by = "sample_sizefract")
 
 #### basic stats ####
 # Total number of ASVs per Division #
@@ -131,7 +135,7 @@ bp_legnd <- get_legend(bp_leg_plot)
 
 
 #### Group by Division ####
-groupby_division <- asvtab_subsamp_prop_tax %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
+groupby_division <- asvtab_merged_subsamp_prop %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
 
 
 

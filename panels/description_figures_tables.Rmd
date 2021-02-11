@@ -1,0 +1,20 @@
+---
+title: "Welcome"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+### List of interactive figures and tables from the paper: *An 18S V4 rDNA metabarcoding dataset of protist diversity in the Atlantic inflow to the Arctic Ocean, through the year and down to 1000 m depth.*
+
+Figure 1: Map of sampling locations. (*still to do*)  
+Figure 2: Profiles of environmental parameters.  
+Figure 3: Rarefaction curves.  
+Figure 4: Barplot of proportional read abundance of the major protist clades (default division) in each size-fractionated sample.  
+Figure S1: Barplot of number of Amplicon Sequence Variants (ASVs) in the major protist clades (default division) in each size-fractionated sample. 
+
+Table S1: Number of ASVs assigned to each clade of a chosen taxonomic level (default division), within each size fraction, and in total. Note that an ASV may occur in multiple size fractions.  
+Table S2: Maximum and minimum read proportion of each clade of a chosen taxonomic level (default division), within each size fraction. 
+
+

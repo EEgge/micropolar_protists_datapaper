@@ -5,7 +5,7 @@ sbp_bar = sidebarPanel(
     radioButtons("which_tab", "ASV-table with merged or separate replicates:", 
                  choices = c("Merged" = "merged", "Separate" = "separate"), selected = "merged"),
     selectInput("taxo_group_barp", label = "Division", 
-                choices = c(levels(as.factor(asvtab_merg_subsamp_readnum$divisionlong)),  "All"), 
+                choices = c(levels(as.factor(asvtab4_merged_subsamp_readnum$divisionlong)),  "All"), 
                 selected = "All", multiple = TRUE),
     radioButtons("taxlevel_barplot", label = "Taxonomic level",
                  choices = c("Division" = "divisionlong", "Class"="class", "Order"="order", "Family"="family", "Genus"="genus", "Species"="species")),

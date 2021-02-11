@@ -30,9 +30,18 @@ for (i in 1:dim(asvtab_wtax)[1]) {
 asvtab_wo_metazoa_embr <- asvtab_wtax %>% filter(division !="Metazoa", class != "Embryophyceae")
 dim(asvtab_wo_metazoa_embr) #6545 x 209
 length(unique(asvtab_wo_metazoa_embr$asv_code))
+write_delim(asvtab_wo_metazoa_embr, "data/asvtab1_nonmerged_readnum.txt", delim = "\t")
+
+
 
 asvtab_num <- asvtab_wo_metazoa_embr %>% select_if(is.numeric)
 asvtab_notnum <- asvtab_wo_metazoa_embr %>% select_if(negate(is.numeric))
+
+asvtab_pa <- asvtab_num
+asvtab_pa[asvtab_pa>0] <- 1
+asvtab_nonsubsamp_pa <- bind_cols(asvtab_notnum, asvtab_pa)
+write_delim(asvtab_nonsubsamp_pa, "data/asvtab3_nonmerged_pa.txt", delim = "\t")
+
 
 colSums(asvtab_num)
 
@@ -161,7 +170,16 @@ asvtab_subsamp_num_prop <- sweep(asvtab_subsamp_num, 2 , colSums(asvtab_subsamp_
 
 colSums(asvtab_subsamp_num_prop)
 asvtab_subsamp_prop_tax <- bind_cols(asvtab_subsamp_notnum, asvtab_subsamp_num_prop)
-write_delim(asvtab_subsamp_prop_tax, "data/asvtab_subsamp_prop_tax.txt", delim = "\t")
+write_delim(asvtab_subsamp_prop_tax, "data/asvtab_subsamp_prop_wtax.txt", delim = "\t")
 
 dim(asvtab_subsamp_prop_tax) 
+
+
+#### Create presence-absence after subsampling asv table ####
+asvtab_subsamp_notnum <- asvtab_subsamp_prop_wtax %>% select_if(negate(is.numeric))
+asvtab_subsamp_num_prop <- asvtab_subsamp_prop_wtax %>% select_if(is.numeric)
+asvtab_subsamp_num_prop_pa <- asvtab_subsamp_num_prop
+asvtab_subsamp_num_prop_pa[asvtab_subsamp_num_prop_pa >0] <- 1
+asvtab_subsamp_pa_wtax <- bind_cols(asvtab_subsamp_notnum, asvtab_subsamp_num_prop_pa)
+write_delim(asvtab_subsamp_pa_wtax, "data/asvtab_subsamp_pa_wtax.txt", delim = "\t")
 

@@ -27,9 +27,9 @@ output$barplotly_net <- renderPlotly({
 barplots <- eventReactive(input$actionb_barplot, { 
   
   if (input$which_tab == "merged") {
-    asvtab_bp_start <- asvtab_subsamp_prop_tax
+    asvtab_bp_start <- asvtab5_merged_subsamp_prop
   } else {
-    asvtab_bp_start <- read_delim(here("data", "asvtab_nonmerged_prop_wtax.txt"), delim = "\t")
+    asvtab_bp_start <- asvtab2_nonmerged_prop
   }
   
   #### Function to identify taxa that were present with < 5% of the reads in all samples ####
@@ -112,7 +112,7 @@ barplots <- eventReactive(input$actionb_barplot, {
   
   #### 03.02.21 her er jeg ####
   if (input$which_tab == "merged") {
-  taxlevel_pivot_wmeta2 <- taxlevel_pivot_wmeta %>% mutate(station_depth = factor(station_depth, levels = unique(meta_tab$station_depth), ordered = T),
+  taxlevel_pivot_wmeta2 <- taxlevel_pivot_wmeta %>% mutate(station_depth = factor(station_depth, levels = unique(meta_tab_sample_sf$station_depth), ordered = T),
                                                            month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov"), ordered = T), 
                                                            collection_method = factor(collection_method, levels = c("niskin", "net")), 
                                                            size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))
@@ -164,7 +164,7 @@ barplots <- eventReactive(input$actionb_barplot, {
   
   } else {
   
-  taxlevel_pivot_wmeta2 <- taxlevel_pivot_wmeta %>% mutate(station_dep_com = factor(station_dep_com, levels = unique(meta_tab$station_dep_com), ordered = T),
+  taxlevel_pivot_wmeta2 <- taxlevel_pivot_wmeta %>% mutate(station_dep_com = factor(station_dep_com, levels = unique(meta_tab_seq_event$station_dep_com), ordered = T),
                                                            month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov"), ordered = T), 
                                                            collection_method = factor(collection_method, levels = c("niskin", "net")),
                                                            size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))

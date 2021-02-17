@@ -13,8 +13,8 @@ asvtab_wtax <- read_excel(here("metapr2/export", "metapr2_wide_asv_set_207_208_2
 dim(asvtab_wtax)
 length(unique(asvtab_wtax$asv_code))
 #7054 x 208
-meta_tab <- read_delim(here("figures_tables/tables", "table1.txt"), delim = "\t")
-names(meta_tab)
+meta_tab_seq_event <- read_delim(here("data", "meta_data_fastqfiles.txt"), delim = "\t")
+meta_tab_sample_sf <- meta_tab_seq_event[!duplicated(meta_tab_seq_event$sample_sizefract),]
 env_tab <- read_delim(here("data", "meta_cleanMP.txt"), delim = "\t")
 
 
@@ -47,16 +47,18 @@ colSums(asvtab_num)
 
 meta_tab_nodups <- meta_tab[!duplicated(meta_tab$sample_sizefract),]
 
+asvtab_wo_metazoa_embr <- read_delim(here("data", "asvtab1_nonmerged_readnum.txt"), delim = "\t")
+asvtab_num <- asvtab_wo_metazoa_embr %>% purrr::keep(is.numeric)
 #### pivot longer, then merge "sample_sizefract" with replicates:  ####
 asvtab_num_pivot <- pivot_longer(asvtab_wo_metazoa_embr, cols=colnames(asvtab_num), names_to = "seq_event")
-asvtab_num_pivot_sampsf <- left_join(asvtab_num_pivot, meta_tab, by = "seq_event")
-asvtab_num_pivot_sampsf_merge <- asvtab_num_pivot_sampsf %>% group_by(sample_sizefract, asv_code, kingdom, supergroup, division, class, family, order, genus, species, divisionlong) %>% 
+asvtab_num_pivot_sampsf <- left_join(asvtab_num_pivot, meta_tab_seq_event, by = "seq_event")
+asvtab_num_pivot_sampsf_merge <- asvtab_num_pivot_sampsf %>% group_by(sample_sizefract, asv_code, kingdom, supergroup, division, class, family, order, genus, species, divisionlong, sequence) %>% 
                                  select(-file_name) %>% summarise_if(is.numeric, sum)
 
 #pivot wider prior to rrarefy:
-merged_asv_tab <- pivot_wider(asvtab_num_pivot_sampsf_merge, id_cols = c(asv_code, kingdom, supergroup, division, class, family, order, genus, species), names_from = sample_sizefract, values_from = value)
-dim(merged_asv_tab) #6545 x 164
-
+merged_asv_tab <- pivot_wider(asvtab_num_pivot_sampsf_merge, id_cols = c(asv_code, kingdom, supergroup, division, divisionlong, class, family, order, genus, species, sequence), names_from = sample_sizefract, values_from = value)
+dim(merged_asv_tab) 
+write_delim(merged_asv_tab, "data/asvtab1b_merged_readnum.txt", delim = "\t")
 
 #then subsample even read number per sample_sizefract
 #number of reads in each sample_sizefract:

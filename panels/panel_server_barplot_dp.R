@@ -26,6 +26,13 @@ output$barplotly_net <- renderPlotly({
 
 barplots <- eventReactive(input$actionb_barplot, { 
   
+  waiter <- waiter::Waiter$new()
+  waiter$show()
+  on.exit(waiter$hide())
+  
+  Sys.sleep(sample(5, 1))
+  runif(1)
+  
   if (input$which_tab == "merged") {
     asvtab_bp_start <- asvtab5_merged_subsamp_prop
   } else {

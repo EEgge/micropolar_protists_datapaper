@@ -27,6 +27,13 @@ output$chlplotly <- renderPlotly({
 })
 
 env_data_figure <- reactive({
+  
+  waiter <- waiter::Waiter$new()
+  waiter$show()
+  on.exit(waiter$hide())
+  
+  Sys.sleep(sample(5, 1))
+  runif(1)
 
 axte <- 0.6
 axti <- 0.8       

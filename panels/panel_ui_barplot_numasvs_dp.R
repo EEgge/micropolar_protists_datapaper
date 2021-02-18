@@ -15,6 +15,7 @@ sbp_barasvs = sidebarPanel(
 
 
 barpage_asvs = fluidPage(
+  waiter::use_waiter(),
   headerPanel("Barplot, taxonomic distribution of ASV richness"),
   sidebarLayout(
     sbp_barasvs,

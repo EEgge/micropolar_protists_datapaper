@@ -10,6 +10,7 @@ sbp_rare = sidebarPanel(
 )
 
 rarefpage = fluidPage(
+  waiter::use_waiter(),
   headerPanel("Rarefaction curves"),
   sidebarLayout(
     sbp_rare,

@@ -15,6 +15,7 @@ sbp_bar = sidebarPanel(
 
 
 barpage = fluidPage(
+  waiter::use_waiter(),
   headerPanel("Barplot"),
   sidebarLayout(
     sbp_bar,

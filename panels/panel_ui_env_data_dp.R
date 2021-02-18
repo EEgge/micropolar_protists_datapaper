@@ -1,4 +1,5 @@
 envpage = fluidPage(
+  waiter::use_waiter(),
   headerPanel("Profiles of physical and chemical parameters"),
     mainPanel(
       plotlyOutput(outputId = "salplotly"),

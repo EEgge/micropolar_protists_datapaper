@@ -4,7 +4,20 @@ output$rarefactionplot_dp <- renderPlotly({
 })
 
 rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
+  # waiter::Waiter$new(id = "rarefactionplot_dp")$show()
+  # 
+  # Sys.sleep(3)
+  # 
   
+  
+  
+  waiter <- waiter::Waiter$new()
+  waiter$show()
+  on.exit(waiter$hide())
+
+  Sys.sleep(sample(5, 1))
+  runif(1)
+
   if (input$which_asvtab == "separate") {
     asvtab_start <- asvtab1_nonmerged_readnum 
   } else {

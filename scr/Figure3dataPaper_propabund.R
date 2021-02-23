@@ -22,12 +22,8 @@ library(xtable)
 
 #### Read files ####
 # Meta data # 
-meta_tab_seq_event <- read_delim(here("figures_tables/tables", "table1.txt"), delim = "\t")
-names(meta_tab)
-meta_tab_sample_sf <- meta_tab_seq_event[!duplicated(meta_tab$sample_sizefract),]
-
-# Environmental data #
-env_tab <- read_delim(here("data", "meta_cleanMP.txt"), delim = "\t")
+meta_tab_seq_event <- read_delim(here("data", "meta_data_fastqfiles.txt"), delim = "\t")
+meta_tab_sample_sf <- meta_tab_seq_event[!duplicated(meta_tab_seq_event$sample_sizefract),]
 
 # asv tables #
 asvtab_wtax <- read_excel(here("metapr2/export", "metapr2_wide_asv_set_207_208_209_Eukaryota.xlsx"))
@@ -67,7 +63,7 @@ asvtab_prop_tax <- cbind.data.frame(asvtab_notnum, asvtab_num_prop)
 
 
 
-asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab4_merged_subsamp_prop.txt"), delim = "\t")
+asvtab_subsamp_prop_tax <- read_delim(here("data", "asvtab5_merged_subsamp_prop.txt"), delim = "\t")
 dim(asvtab_subsamp_prop_tax) #6536 x 166 
 
 #### Create presence-absence after subsampling asv table ####
@@ -76,7 +72,7 @@ asvtab_subsamp_num_prop <- asvtab_subsamp_prop_tax %>% select_if(is.numeric)
 asvtab_subsamp_num_prop_pa <- asvtab_subsamp_num_prop
 asvtab_subsamp_num_prop_pa[asvtab_subsamp_num_prop_pa >0] <- 1
 asvtab_subsamp_pa_tax <- bind_cols(asvtab_subsamp_notnum, asvtab_subsamp_num_prop_pa)
-write_delim(asvtab_subsamp_pa_tax, "data\asvtab5_merged_subsamp_pa.txt", delim = "\t")
+#write_delim(asvtab_subsamp_pa_tax, "data\asvtab6_merged_subsamp_pa.txt", delim = "\t")
 
 #Num ASVs after subsampling : 
 length(which(rowSums(asvtab_subsamp_num_prop_pa) == 0))
@@ -120,14 +116,14 @@ names(bpcolvec) <- bpcol$Divisionlong
 bp_leg_plot <- ggplot(bpcol, aes(x = Divisionlong, fill = Divisionlong))+
   geom_bar()+
   scale_fill_manual(values = bpcolvec)+
-  theme(legend.position = "bottom")+
+  theme(legend.position = "right")+
   guides(shape = guide_legend(override.aes = list(size = 0.7)),
          color = guide_legend(override.aes = list(size = 0.7)),
-         fill = guide_legend(nrow = 6, byrow = F))+
+         fill = guide_legend(nrow = 4, byrow = F))+
   theme(legend.title = element_text(size = 9),
         legend.text = element_text(size = 9),
         legend.key.size = unit(0.7, "lines"))+
-  labs(fill = "Division")
+  labs(fill = "Division/Class")
 bp_leg_plot
 bp_legnd <- get_legend(bp_leg_plot)
 
@@ -135,7 +131,7 @@ bp_legnd <- get_legend(bp_leg_plot)
 
 
 #### Group by Division ####
-groupby_division <- asvtab_merged_subsamp_prop %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
+groupby_division <- asvtab_subsamp_prop_tax %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
 
 
 
@@ -189,7 +185,7 @@ division_pivot <- division_pivot %>% mutate(Taxonomic_group = factor(Taxonomic_g
 meta_tab_nodups <- meta_tab[!duplicated(meta_tab$sample_sizefract),]
 
 #### Join pivoted taxa table with metadata ####
-division_pivot_wmeta <- left_join(division_pivot, meta_tab_nodups, by = "sample_sizefract")
+division_pivot_wmeta <- left_join(division_pivot, meta_tab_sample_sf, by = "sample_sizefract")
 #division_pivot_wmeta <- left_join(division_pivot, meta_tab, by = "seq_event")
 
 division_pivot_wmeta_merge <- division_pivot_wmeta %>% group_by(Taxonomic_group, sample_sizefract, station_depth, env_sample, size_fraction, month, station, collection_method) %>%
@@ -201,7 +197,7 @@ division_pivot_wmeta2 <- division_pivot_wmeta %>% mutate(station_dep_com = facto
                                                          collection_method = factor(collection_method, levels = c("niskin", "net")),
                                                          size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))
 
-division_pivot_wmeta2 <- division_pivot_wmeta_merge %>% mutate(station_depth = factor(station_depth, levels = unique(meta_tab$station_depth), ordered = T),
+division_pivot_wmeta2 <- division_pivot_wmeta_merge %>% mutate(station_depth = factor(station_depth, levels = unique(meta_tab_sample_sf$station_depth), ordered = T),
                                                           month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov"), ordered = T), 
                                                           collection_method = factor(collection_method, levels = c("niskin", "net")),
                                                           size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))
@@ -272,6 +268,6 @@ pnet
 figureS2 <- ggdraw()+
   draw_plot(p12+theme(legend.position = "none"), x = 0, y = 33/52, width = 0.545, height = 19/52)+
   draw_plot(p345+theme(legend.position = "none"), x = 0, y = 9.8/52, width = 1, height = 25/52)+
-  draw_plot(pnet+theme(legend.position = "none"), x = 0.01, y = 0, width = 0.535, height = 11.5/52)+
-  draw_grob(bp_legnd, x = 0.275, y = -.37)
+  draw_plot(pnet+theme(legend.position = "none"), x = 0.48, y = 0, width = 0.535, height = 11.5/52)#+
+  #draw_grob(bp_legnd, x = 0.275, y = -.37)
 figureS2

@@ -133,7 +133,7 @@ bp_legnd <- get_legend(bp_leg_plot)
 #### Group by Division ####
 groupby_division <- asvtab_subsamp_prop_tax %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
 
-
+groupby_division <- asvtab6_merged_subsamp_pa %>% group_by(divisionlong) %>% summarise_if(is.numeric, sum)
 
 
 #### Function to identify taxa that were present with < 5% of the reads in all samples ####
@@ -148,7 +148,8 @@ groupby_bin <- apply(groupby_mat, 2, limfun)
 if (is.vector(groupby_bin)) {
   groupby_bin2 <- as.data.frame(as.list(groupby_bin))
 } else {
-  groupby_bin2 <- as.data.frame(groupby_bin)}
+  groupby_bin2 <- as.data.frame(groupby_bin)
+  }
 
 
 #### Identify taxa present as < 5% in all samples (low prop. taxa) ####
@@ -182,7 +183,6 @@ division_pivot <- pivot_longer(taxgroups_select3, cols = !Taxonomic_group, names
 #Taxonomic_group2 <- Taxonomic_group[c(1:7,9:18,8,19)]
 division_pivot <- division_pivot %>% mutate(Taxonomic_group = factor(Taxonomic_group, levels=.env$Taxonomic_group, ordered = T))
 
-meta_tab_nodups <- meta_tab[!duplicated(meta_tab$sample_sizefract),]
 
 #### Join pivoted taxa table with metadata ####
 division_pivot_wmeta <- left_join(division_pivot, meta_tab_sample_sf, by = "sample_sizefract")
@@ -204,9 +204,39 @@ division_pivot_wmeta2 <- division_pivot_wmeta_merge %>% mutate(station_depth = f
 
 division_pivot_wmeta2 %>% ungroup %>% group_by(Taxonomic_group, size_fraction) %>% summarise_if(is.numeric)
 #### Plot for January and March (only two size fractions, no net haul) ####
+
+
+division_pivot_wmeta3 <- division_pivot_wmeta2 %>% mutate(size_fraction=recode(size_fraction, "0.4_3" = "0.45-3", "3_10" = "3-10", "10_50" = "10-50", "50_200" = "50-200", "3_180" = "3-180"))
+division_pivot_wmeta4 <- division_pivot_wmeta3 %>% mutate(newsizefract = forcats::fct_collapse(size_fraction, "3-180/3-10" = c("3-10", "3-180")))
+
+#%>% unite("met_month", month,collection_method)
+#division_pivot_wmeta5 <- division_pivot_wmeta4 %>% mutate(met_month = factor(met_month, levels = c("Jan_niskin", "Mar_niskin", "May_niskin", "Aug_niskin", "Nov_niskin", "May_net", "Aug_net", "Nov_net"))) 
+samp_order <- "station_depth"
+
 division_pivot_wmeta2_jan_mar <- division_pivot_wmeta2 %>% filter(month %in% c("Jan", "Mar"), fraction_max != 200)
 
-samp_order <- "station_depth"
+pall <- ggplot(division_pivot_wmeta4, aes(x=reorder(get(.env$samp_order), desc(get(.env$samp_order))), y=value, fill = Taxonomic_group))+
+  #labs(title = "Proportional read abundance")+
+  theme_classic()+
+  geom_bar(stat = "identity", position = "stack")+
+  scale_fill_manual(values = bpcolvec)+
+  facet_grid(rows = vars(month), cols = vars(newsizefract), scales = "free_y", space = "free_y")+
+  ylab("Proportion of reads")+
+  xlab("Station - Depth (m)")+
+  theme(strip.background = element_rect(size = 0.5),
+        strip.text.x = element_text(margin = margin(.05, 0, .05, 0, "cm")),
+        strip.text.y = element_text(margin = margin(0, 0.1, 0, 0.1, "cm")))+
+  #ylim(0,1.001)+
+  ylim(0,1.01)+
+  coord_flip()+
+  theme(legend.title = element_text(size = 9),
+                     legend.text = element_text(size = 8),
+                     legend.key.size = unit(0.65, "lines"))+
+  labs(fill = "Division/Class")+
+  theme(legend.position = "bottom")
+pall
+
+annotate_figure(pall, top = text_grob(expression(paste("Size fraction (", mu, "m)"))), right = text_grob("Cruise month                 ", rot = -90))
 
 p12 <- ggplot(division_pivot_wmeta2_jan_mar, aes(x=reorder(get(.env$samp_order), desc(get(.env$samp_order))), y=value, fill = Taxonomic_group))+
   labs(title = "Proportional read abundance")+
@@ -219,7 +249,8 @@ p12 <- ggplot(division_pivot_wmeta2_jan_mar, aes(x=reorder(get(.env$samp_order),
   theme(strip.background = element_rect(size = 0.5),
         strip.text.x = element_text(margin = margin(.05, 0, .05, 0, "cm")),
         strip.text.y = element_text(margin = margin(0, 0.1, 0, 0.1, "cm")))+
-  ylim(0,1.001)+
+  #ylim(0,1.001)+
+  ylim(0,1150)+
   coord_flip()
 p12
 

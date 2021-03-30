@@ -1,27 +1,11 @@
 #### Output ####
-output$barplot_12 <- renderPlot({
-  barplots()$p12
+
+output$barplot_asvly <- renderPlotly({
+  barplots_asv()$bp_asvsly
 })
 
-output$barplot_345 <- renderPlot({
-  barplots()$p345
-})
-
-output$barplot_net <- renderPlot({
-  barplots()$pnet
-})
-
-
-output$barplot_asvly_12 <- renderPlotly({
-  barplots_asv()$p12ly
-})
-
-output$barplot_asvly_345 <- renderPlotly({
-  barplots_asv()$p345ly
-})
-
-output$barplot_asvly_net <- renderPlotly({
-  barplots_asv()$pnetly
+output$bp_asv_text <- renderText({
+  barplots_asv()$caption
 })
 
 barplots_asv <- eventReactive(input$actionb_barplot_asv, { 
@@ -33,9 +17,9 @@ barplots_asv <- eventReactive(input$actionb_barplot_asv, {
   runif(1)
   
   if (input$which_tab_rich == "merged") {
-    asvtab_bp_start <- asvtab6_merged_subsamp_pa
+    asvtab_bp_start <- asvtab3c_merged_subsamp_pa
   } else {
-    asvtab_bp_start <- asvtab3_nonmerged_pa
+    asvtab_bp_start <- asvtab1c_nonmerged_pa
   }
   
   #### Function to identify taxa that were present with < 5% of the reads in all samples ####
@@ -134,51 +118,25 @@ barplots_asv <- eventReactive(input$actionb_barplot_asv, {
                                                              month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov"), ordered = T), 
                                                              collection_method = factor(collection_method, levels = c("niskin", "net")), 
                                                              size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))
+    taxlevel_pivot_wmeta3 <- taxlevel_pivot_wmeta2 %>% mutate(size_fraction=recode(size_fraction, "0.4_3" = "0.45-3", "3_10" = "3-10", "10_50" = "10-50", "50_200" = "50-200", "3_180" = "3-180"))
+    taxlevel_pivot_wmeta4 <- taxlevel_pivot_wmeta3 %>% mutate(newsizefract = forcats::fct_collapse(size_fraction, "3-180/3-10" = c("3-10", "3-180")))
     
     taxlevel_pivot_wmeta2_jan_mar <- taxlevel_pivot_wmeta2 %>% filter(month %in% c("Jan", "Mar"), fraction_max != 200)
     
-    p12 <- ggplot(taxlevel_pivot_wmeta2_jan_mar, aes(x=reorder(station_depth, desc(station_depth)), y=value, fill = Taxonomic_group, 
+    bp_asvs <- ggplot(taxlevel_pivot_wmeta4, aes(x=reorder(station_depth, desc(station_depth)), y=value, fill = Taxonomic_group, 
                                                      text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_depth, percentornum, roundfun(value))))+
-      labs(title = "Proportional read abundance")+
+      labs(title = percentornum)+
       geom_bar(stat = "identity", position = "stack")+
       #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
+      facet_grid(rows = vars(month), cols = vars(newsizefract), scales = "free_y", space = "free_y")+
       theme(axis.title.y = element_blank(),
             axis.title.x = element_blank())+
       #ylim(0,1.01)+
       coord_flip()
-    p12
-    p12ly <- ggplotly(p12, tooltip = "text")
+    bp_asvs
+    bp_asvsly <- ggplotly(bp_asvs, tooltip = "text")
     
-    #### Plot for May, Aug, Nov, Niskin samples ####
-    taxlevel_pivot_wmeta2_may_nov <- taxlevel_pivot_wmeta2 %>% filter(month %in% c("May", "Aug", "Nov"), collection_method == "niskin")
-    
-    p345 <- ggplot(taxlevel_pivot_wmeta2_may_nov, aes(x=reorder(station_depth, desc(station_depth)), y=value, fill = Taxonomic_group,
-                                                      text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_depth, percentornum, roundfun(value))))+
-      #labs(title = "Proportional read abundance")+
-      geom_bar(stat = "identity", position = "stack")+
-      #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
-      theme(axis.title.y = element_blank(),
-            axis.title.x = element_blank())+
-      #ylim(0,1.01)+
-      coord_flip()
-    
-    p345ly <- ggplotly(p345, tooltip = "text")
-    #### Plot net haul ####
-    taxlevel_pivot_wmeta2_net <- taxlevel_pivot_wmeta2 %>% filter(collection_method == "net")
-    
-    pnet <- ggplot(taxlevel_pivot_wmeta2_net, aes(x=reorder(station_depth, desc(station_depth)), y=value, fill = Taxonomic_group,
-                                                  text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_depth, percentornum, roundfun(value))))+
-      #labs(title = "Proportional read abundance")+
-      geom_bar(stat = "identity", position = "stack")+
-      #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
-      theme(axis.title.y = element_blank(),
-            axis.title.x = element_blank())+
-      #ylim(0,1.01)+
-      coord_flip()
-    pnetly <- ggplotly(pnet, tooltip = "text")
+    caption = ""
     
   } else {
     
@@ -186,53 +144,24 @@ barplots_asv <- eventReactive(input$actionb_barplot_asv, {
                                                              month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov"), ordered = T), 
                                                              collection_method = factor(collection_method, levels = c("niskin", "net")),
                                                              size_fraction = factor(size_fraction, levels = c("0.4_3", "3_10", "10_50", "50_200", "3_180"), ordered = T))
+    taxlevel_pivot_wmeta3 <- taxlevel_pivot_wmeta2 %>% mutate(size_fraction=recode(size_fraction, "0.4_3" = "0.45-3", "3_10" = "3-10", "10_50" = "10-50", "50_200" = "50-200", "3_180" = "3-180"))
+    taxlevel_pivot_wmeta4 <- taxlevel_pivot_wmeta3 %>% mutate(newsizefract = forcats::fct_collapse(size_fraction, "3-180/3-10" = c("3-10", "3-180")))
     
-    taxlevel_pivot_wmeta2_jan_mar <- taxlevel_pivot_wmeta2 %>% filter(month %in% c("Jan", "Mar"), fraction_max != 200)
-    
-    p12 <- ggplot(taxlevel_pivot_wmeta2_jan_mar, aes(x=reorder(station_dep_com, desc(station_dep_com)), y=value, fill = Taxonomic_group, 
+    bp_asvs <- ggplot(taxlevel_pivot_wmeta4, aes(x=reorder(station_dep_com, desc(station_dep_com)), y=value, fill = Taxonomic_group, 
                                                      text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_dep_com, percentornum, roundfun(value))))+
-      labs(title = "Number or proportion of ASVs")+
+      labs(title = percentornum)+
       geom_bar(stat = "identity", position = "stack")+
       #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
+      facet_grid(rows = vars(month), cols = vars(newsizefract), scales = "free_y", space = "free_y")+
       theme(axis.title.y = element_blank(),
             axis.title.x = element_blank())+
       #ylim(0,1.01)+
       coord_flip()
-    p12
-    p12ly <- ggplotly(p12, tooltip = "text")
-    
-    #### Plot for May, Aug, Nov, Niskin samples ####
-    taxlevel_pivot_wmeta2_may_nov <- taxlevel_pivot_wmeta2 %>% filter(month %in% c("May", "Aug", "Nov"), collection_method == "niskin")
-    
-    p345 <- ggplot(taxlevel_pivot_wmeta2_may_nov, aes(x=reorder(station_dep_com, desc(station_dep_com)), y=value, fill = Taxonomic_group,
-                                                      text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_dep_com, percentornum, roundfun(value))))+
-      #labs(title = "Proportional read abundance")+
-      geom_bar(stat = "identity", position = "stack")+
-      #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
-      theme(axis.title.y = element_blank(),
-            axis.title.x = element_blank())+
-      #ylim(0,1.01)+
-      coord_flip()
-    
-    p345ly <- ggplotly(p345, tooltip = "text")
-    #### Plot net haul ####
-    taxlevel_pivot_wmeta2_net <- taxlevel_pivot_wmeta2 %>% filter(collection_method == "net")
-    
-    pnet <- ggplot(taxlevel_pivot_wmeta2_net, aes(x=reorder(station_dep_com, desc(station_dep_com)), y=value, fill = Taxonomic_group,
-                                                  text = sprintf("Taxon: %s<br>Sample: %s<br>%s: %s ", Taxonomic_group, station_dep_com, percentornum, roundfun(value))))+
-      #labs(title = "Proportional read abundance")+
-      geom_bar(stat = "identity", position = "stack")+
-      #scale_fill_manual(values = bpcolvec)+
-      facet_grid(rows = vars(month), cols = vars(size_fraction), scales = "free_y", space = "free_y")+
-      theme(axis.title.y = element_blank(),
-            axis.title.x = element_blank())+
-      #ylim(0,1.01)+
-      coord_flip()
-    pnetly <- ggplotly(pnet, tooltip = "text")
-    
+    bp_asvs
+    bp_asvsly <- ggplotly(bp_asvs, tooltip = "text")
+    caption = "Explanation of sample names: h = hiseq, m = miseq, bc = barcode, lib = library, ex = extraction, 60deg = 60 degrees annealing temperature."
   }
   
-  return(list(p12 = p12, p345 = p345, pnet = pnet, p12ly = p12ly, p345ly = p345ly, pnetly = pnetly))
+  
+  return(list(bp_asvsly = bp_asvsly, caption = caption))
 })

@@ -3,7 +3,7 @@ sbp_rare = sidebarPanel(
   radioButtons("which_asvtab", "ASV-table with separate or merged replicates:", 
                choices = c("Separate" = "separate", "Merged and subsampled" = "merged"), selected = "merged"),
   selectInput("taxo_group_raref", label = "Division", 
-                     choices = c(levels(as.factor(asvtab4_merged_subsamp_readnum$divisionlong)),  "All"), 
+                     choices = c(levels(as.factor(asvtab3_merged_subsamp_readnum$divisionlong)),  "All"), 
                      selected = "All", multiple = TRUE)
   
   
@@ -15,7 +15,8 @@ rarefpage = fluidPage(
   sidebarLayout(
     sbp_rare,
     mainPanel(
-      plotlyOutput(outputId = "rarefactionplot_dp")
+      plotlyOutput(outputId = "rarefactionplot_dp"),
+      plotlyOutput(outputId = "nasvs_slope")
     )
   )
 )

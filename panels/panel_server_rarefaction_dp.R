@@ -3,12 +3,12 @@ output$rarefactionplot_dp <- renderPlotly({
   rarefaction_curves()$rareplotly
 })
 
+output$nasvs_slope <- renderPlotly({
+  rarefaction_curves()$nasvs_slope_plotly
+})
+
+
 rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
-  # waiter::Waiter$new(id = "rarefactionplot_dp")$show()
-  # 
-  # Sys.sleep(3)
-  # 
-  
   
   
   waiter <- waiter::Waiter$new()
@@ -21,13 +21,13 @@ rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
   if (input$which_asvtab == "separate") {
     asvtab_start <- asvtab1_nonmerged_readnum 
   } else {
-    asvtab_start <- asvtab4_merged_subsamp_readnum
+    asvtab_start <- asvtab3_merged_subsamp_readnum
   }
   
   
   if (input$taxo_group_raref != "All") {
     asvtab_num <- asvtab_start %>% filter(divisionlong %in% input$taxo_group_raref) %>% 
-      purrr::keep(is.numeric) #Create new OTU table with only the selected division
+      purrr::keep(is.numeric) #Create new ASV table with only the selected division
   } else {
     asvtab_num <- asvtab_start %>% purrr::keep(is.numeric)
   }
@@ -88,11 +88,17 @@ names(rarslopes) <- names(asvtab_num)
 
 min(rarslopes)
 
-asvtab6_num <- asvtab6_merged_subsamp_pa %>% purrr::keep(is.numeric)
-nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab6_num), "nasvs" = colSums(asvtab6_num))
+asvtab3c_num <- asvtab3c_merged_subsamp_pa %>% purrr::keep(is.numeric)
+nasvs_sample_sizefract <- tibble("sample_sizefract" = names(asvtab3c_num), "nasvs" = colSums(asvtab3c_num))
 slope_sample_sizefract <- tibble("sample_sizefract" = names(rarslopes), "slope" = rarslopes)
 
-nasvs_slope <- left_join(nasvs_sample_sizefract, slope_sample_sizefract, by = "sample_sizefract")
+nasvs_slope <- left_join(nasvs_sample_sizefract, slope_sample_sizefract, by = "sample_sizefract") %>% rowwise() %>% 
+  mutate(sizefract = paste(str_split(sample_sizefract, "_")[[1]][4],str_split(sample_sizefract, "_")[[1]][5], sep = "_"))
 
-  return(list(rareplotly = rareplotly))   
+nasvs_slope_plot <- ggplot(data = nasvs_slope, aes(x = nasvs, y = slope, colour = sizefract, text = sprintf("Sample: %s<br>Number of ASVs: %s<br>Slope: %s ", sample_sizefract, round(nasvs,0), round(slope, 5))))+
+  geom_point()
+
+nasvs_slope_plotly <- ggplotly(nasvs_slope_plot, tooltip = "text")
+
+  return(list(rareplotly = rareplotly, nasvs_slope_plotly = nasvs_slope_plotly))   
 })

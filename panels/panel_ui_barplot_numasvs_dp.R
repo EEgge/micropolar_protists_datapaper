@@ -5,7 +5,7 @@ sbp_barasvs = sidebarPanel(
   radioButtons("which_tab_rich", "ASV-table with merged or separate replicates:", 
                choices = c("Merged" = "merged", "Separate" = "separate"), selected = "merged"),
   selectInput("taxo_group_barp_asv", label = "Division", 
-              choices = c(levels(as.factor(asvtab4_merged_subsamp_readnum$divisionlong)),  "All"), 
+              choices = c(levels(as.factor(asvtab3_merged_subsamp_readnum$divisionlong)),  "All"), 
               selected = "All", multiple = TRUE),
   radioButtons("taxlevel_barplot_asv", label = "Taxonomic level",
                choices = c("Division" = "divisionlong", "Class"="class", "Order"="order", "Family"="family", "Genus"="genus", "Species"="species")),
@@ -20,9 +20,8 @@ barpage_asvs = fluidPage(
   sidebarLayout(
     sbp_barasvs,
     mainPanel(
-      plotlyOutput(outputId = "barplot_asvly_12"),
-      plotlyOutput(outputId = "barplot_asvly_345"),
-      plotlyOutput(outputId = "barplot_asvly_net")
+      plotlyOutput(outputId = "barplot_asvly", height = "1200px", width = "1000px"),
+      textOutput(outputId = "bp_asv_text")
     )
   )
 )

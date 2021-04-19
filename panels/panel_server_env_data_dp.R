@@ -37,7 +37,7 @@ env_data_figure <- reactive({
 
 axte <- 0.6
 axti <- 0.8       
-lts <- tibble("station" = levels(as.factor(env_table$station)), "lityp" = c(1,2,1,2,3,4,5,1,2,3,1,2,3,1,2,3))
+lts <- tibble("station" = levels(as.factor(env_depths$station)), "lityp" = c(1,2,1,2,3,4,5,1,2,3,1,2,3,1,2,3))
 
 env_profiles <- env_profiles %>% mutate(month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov", ordered =T)))
 env_profiles <- env_profiles %>% select(month, station, depth_m, CTD.S, CTD.T, sigma, Total_inorgN_uM, PO4_uM, SiOH4_uM, Chl_a)  %>%  filter(depth_m <= 1000)
@@ -45,7 +45,7 @@ env_profiles <- left_join(env_profiles, lts, by ="station") %>% mutate(lityp = a
 env_profiles_melt <- reshape2::melt(env_profiles, measure.vars = c("CTD.S", "CTD.T", "sigma", "Total_inorgN_uM", "PO4_uM", "SiOH4_uM", "Chl_a")) #"variable" is now the type of parameter
 
 env_depths <- env_depths %>% mutate(month = factor(month, levels = c("Jan", "Mar", "May", "Aug", "Nov", ordered =T)))
-env_depths <- env_table %>% select(month, station, depth_m, CTD.S, CTD.T, sigma, Total_inorgN_uM, PO4_uM, SiOH4_uM, Chl_a) %>%  filter(depth_m <= 1000)
+env_depths <- env_depths %>% select(month, station, depth_m, CTD.S, CTD.T, sigma, Total_inorgN_uM, PO4_uM, SiOH4_uM, Chl_a) %>%  filter(depth_m <= 1000)
 env_depths <- left_join(env_depths, lts, by ="station") %>% mutate(lityp = as.factor(lityp))
 env_depths_melt <-reshape2::melt(env_depths, measure.vars = c("CTD.S", "CTD.T", "sigma", "Total_inorgN_uM", "PO4_uM", "SiOH4_uM", "Chl_a"))
 
@@ -67,13 +67,13 @@ envplot <- function(envvar_profile, envvar_depths, ylab) {
   return(envplotly)
 }
 
-salplotly <- envplot(env_profiles_melt %>% filter(variable == "CTD.S"), env_points_melt%>% filter(variable == "CTD.S"), "Salinity [PSU]")
-tempplotly <- envplot(env_profiles_melt %>% filter(variable == "CTD.T"), env_points_melt%>% filter(variable == "CTD.T"), expression(paste("Temperature [", degree,"C]")))
-sigmaplotly <- envplot(env_profiles_melt %>% filter(variable == "sigma"), env_points_melt%>% filter(variable == "sigma"), expression(paste("Density ", sigma)))
-inorgNplotly <- envplot(env_profiles_melt %>% filter(variable == "Total_inorgN_uM"), env_points_melt%>% filter(variable == "Total_inorgN_uM"), expression(paste("Total inorganic N", " [", mu,"M]")))
-phosplotly <- envplot(env_profiles_melt %>% filter(variable == "PO4_uM"), env_points_melt%>% filter(variable == "PO4_uM"), expression(paste("PO"[4]^"3-", " [", mu,"M]")))
-silplotly <- envplot(env_profiles_melt %>% filter(variable == "SiOH4_uM"), env_points_melt%>% filter(variable == "SiOH4_uM"), expression(paste("SiOH"[4], " [", mu,"M]")))
-chlplotly <- envplot(env_profiles_melt %>% filter(variable == "Chl_a"), env_points_melt%>% filter(variable == "Chl_a"), expression(paste("Chl ",italic(a), " [", mu,"g",L^-1,"]")))
+salplotly <- envplot(env_profiles_melt %>% filter(variable == "CTD.S"), env_depths_melt%>% filter(variable == "CTD.S"), "Salinity [PSU]")
+tempplotly <- envplot(env_profiles_melt %>% filter(variable == "CTD.T"), env_depths_melt%>% filter(variable == "CTD.T"), expression(paste("Temperature [", degree,"C]")))
+sigmaplotly <- envplot(env_profiles_melt %>% filter(variable == "sigma"), env_depths_melt%>% filter(variable == "sigma"), expression(paste("Density ", sigma)))
+inorgNplotly <- envplot(env_profiles_melt %>% filter(variable == "Total_inorgN_uM"), env_depths_melt%>% filter(variable == "Total_inorgN_uM"), expression(paste("Total inorganic N", " [", mu,"M]")))
+phosplotly <- envplot(env_profiles_melt %>% filter(variable == "PO4_uM"), env_depths_melt%>% filter(variable == "PO4_uM"), expression(paste("PO"[4]^"3-", " [", mu,"M]")))
+silplotly <- envplot(env_profiles_melt %>% filter(variable == "SiOH4_uM"), env_depths_melt%>% filter(variable == "SiOH4_uM"), expression(paste("SiOH"[4], " [", mu,"M]")))
+chlplotly <- envplot(env_profiles_melt %>% filter(variable == "Chl_a"), env_depths_melt%>% filter(variable == "Chl_a"), expression(paste("Chl ",italic(a), " [", mu,"g",L^-1,"]")))
 
 
 # tempplot <- ggplot(data = env_phys_melt %>% filter(variable == "CTD.T")) + aes(x = desc(sqrt(depth_m)), y = value, lty = lityp)+

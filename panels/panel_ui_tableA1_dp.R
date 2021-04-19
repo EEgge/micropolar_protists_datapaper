@@ -5,7 +5,7 @@ sbp_asvtables = sidebarPanel(
 )
 
 asvtablespage = fluidPage(
-  headerPanel("Table "),
+  headerPanel("Table A1 - Number of ASVs assigned to each taxonomic group, distributed by size fraction."),
   sidebarLayout(
     sbp_asvtables,
     mainPanel(

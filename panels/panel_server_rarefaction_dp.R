@@ -1,9 +1,9 @@
 #### Output ####
-output$rarefactionplot_dp <- renderPlotly({
+output$rarefactionplot_dp <- renderPlot({
   rarefaction_curves()$rareplotly
 })
 
-output$nasvs_slope <- renderPlotly({
+output$nasvs_slope <- renderPlot({
   rarefaction_curves()$nasvs_slope_plotly
 })
 
@@ -32,7 +32,7 @@ rarefaction_curves <- eventReactive(input$actionb_rarefcurve, {
     asvtab_num <- asvtab_start %>% purrr::keep(is.numeric)
   }
   
-  rareobj <- vegan::rarecurve(t(asvtab_num),step=1000) 
+  rareobj <- rarecurve(t(asvtab_num),step=1000) 
 
 rareo_msamp <- list()
 
@@ -42,7 +42,7 @@ if (input$which_asvtab == "separate") {
   }
   print(dim(rareo_msamp[[1]]))
   
-  rareo_msamp_tab <- dplyr::bind_rows(rareo_msamp, .id = "column_label")
+  rareo_msamp_tab <- bind_rows(rareo_msamp, .id = "column_label")
   
   rareo_msamp_tab_meta <- left_join(rareo_msamp_tab, meta_tab_seq_event, by = "seq_event")
   
@@ -63,7 +63,7 @@ rareo_msamp[[i]] <- cbind.data.frame("nASV" = rareobj[[i]], "step" = attr(rareob
 }
 print(dim(rareo_msamp[[1]]))
 
-rareo_msamp_tab <- dplyr::bind_rows(rareo_msamp, .id = "column_label")
+rareo_msamp_tab <- bind_rows(rareo_msamp, .id = "column_label")
 
 rareo_msamp_tab_meta <- left_join(rareo_msamp_tab, meta_tab_sample_sf, by = "sample_sizefract")
 
@@ -82,7 +82,7 @@ rareplotly <- ggplotly(rareplot, tooltip = "text")
 
 rarslopes <- c(NULL)
 for (i in 1:dim(asvtab_num)[2]) {
-  rarslopes[i] <- vegan::rareslope(t(asvtab_num[,i]), sample=sum(asvtab_num[,i])-1)
+  rarslopes[i] <- rareslope(t(asvtab_num[,i]), sample=sum(asvtab_num[,i])-1)
 }
 names(rarslopes) <- names(asvtab_num)
 
@@ -100,5 +100,5 @@ nasvs_slope_plot <- ggplot(data = nasvs_slope, aes(x = nasvs, y = slope, colour 
 
 nasvs_slope_plotly <- ggplotly(nasvs_slope_plot, tooltip = "text")
 
-  return(list(rareplotly = rareplotly, nasvs_slope_plotly = nasvs_slope_plotly))   
+  return(list(rareplotly = rareplot, nasvs_slope_plotly = nasvs_slope_plot))   
 })

@@ -15,8 +15,8 @@ rarefpage = fluidPage(
   sidebarLayout(
     sbp_rare,
     mainPanel(
-      plotlyOutput(outputId = "rarefactionplot_dp"),
-      plotlyOutput(outputId = "nasvs_slope")
+      plotOutput(outputId = "rarefactionplot_dp"),
+      plotOutput(outputId = "nasvs_slope")
     )
   )
 )

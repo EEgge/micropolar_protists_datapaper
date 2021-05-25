@@ -21,13 +21,13 @@ If the Docker application has not been yet uploaded to Google
 * Start Powershell under windows
 
 ```
-cd "C:/daniel.vaulot@gmail.com/Papers/2020 Egge MicroPolar 18S/data/micropolar_protists_datapaper"
+cd "C:/daniel.vaulot@gmail.com/Papers/2020 Egge MicroPolar 18S/data/micropolar-protists_datapaper"
 
 # Buid with cache
 
-docker build . -t micropolar-protist
+docker build . -t micropolar-protists
 
-docker run --rm -p 8080:8080 micropolar-protist
+docker run --rm -p 8080:8080 micropolar-protists
 
 ```
 
@@ -48,29 +48,18 @@ gcloud auth configure-docker
 
 gcloud config set project tactile-bolt-247111
 
-gcloud builds submit --tag asia.gcr.io/tactile-bolt-247111/pr2-primers
+gcloud builds submit --tag asia.gcr.io/tactile-bolt-247111/micropolar-protists
 ```
 
 Deploy to Google Cloud Run (Need only first time)
 
 ```
-gcloud run deploy --image asia.gcr.io/tactile-bolt-247111/pr2-primers --platform managed --max-instances 1
+gcloud run deploy --image asia.gcr.io/tactile-bolt-247111/micropolar-protists --platform managed --max-instances 1
 ```
 
 Effectuer ensuite un mappage de domaine sur:
 
-http://app.pr2-primers.org
-
-
-DO NOT USE - Push image to Google Registry 
-gcloud auth login
-
-gcloud auth configure-docker
-
-docker tag pr2-primers asia.gcr.io/tactile-bolt-247111/pr2-primers:v1.0.2
-
-docker push asia.gcr.io/tactile-bolt-247111/pr2-primers
-```
+http:/micropolar-protists.metapr2.org
 
 
 ## Push container to Docker repository
@@ -80,9 +69,9 @@ docker push asia.gcr.io/tactile-bolt-247111/pr2-primers
 ```
 docker images
 
-docker tag pr2-primers vaulot/pr2-primers:v1.0.2
+docker tag micropolar-protists/micropolar-protists:v1.0.0
 
-docker push vaulot/pr2-primers:v1.0.2
+docker push vaulot/micropolar-protists:v1.0.0
 ```
 
 ## Docker misc
@@ -125,59 +114,3 @@ docker rmi xxxxx
 docker system prune --volumes
 ```
 
-## Example Dockerfile
-
-```
-
-# Base image https://hub.docker.com/u/rocker/
-FROM rocker/shiny-verse
-
-COPY shiny-customized.config /etc/shiny-server/shiny-server.conf
-
-WORKDIR /srv/shiny-server
-
-# copy necessary files
-
-COPY *.md ./
-COPY *.R ./
-COPY /www  ./www
-COPY /data  ./data
-COPY /R  ./R
-
-
-# install directly the packages
-
-RUN Rscript install_packages.R
-
-# For testing
-# CMD Rscript R/test.R
-
-
-# expose port
-
-EXPOSE 8080
-
-USER shiny
-
-# avoid s6 initialization
-# see https://github.com/rocker-org/shiny/issues/79
-
-# The next line prevents the application to start on Google
-# CMD ["R", "-e", "shiny::runApp(port = 8080)"]
-
-# Better to use
-CMD ["/usr/bin/shiny-server"]
-
-```
-
-## Example .dockerignore
-
-
-```
-# .Rprofile is needed to start R studio but not for the shiny app
-.Rprofile
-rsconnect
-archives
-sandbox
-renv
-```
